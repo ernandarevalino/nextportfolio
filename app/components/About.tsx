@@ -2,7 +2,58 @@
 
 import { BsCheckCircleFill, BsEnvelope, BsTelephone, BsGeoAlt } from "react-icons/bs";
 
-export default function About() {
+interface Profile {
+  id: number;
+  hero_title: string;
+  hero_name: string;
+  hero_description: string;
+  typewriter_words: string[];
+  github_url: string;
+  linkedin_url: string;
+  instagram_url: string;
+  about_image_url?: string;
+  about_name?: string;
+  about_title?: string;
+  about_email?: string;
+  about_phone?: string;
+  about_location?: string;
+  about_maps_url?: string;
+  about_heading?: string;
+  about_bio_1?: string;
+  about_bio_2?: string;
+}
+
+interface AboutProps {
+  profile: Profile | null;
+}
+
+const defaultAbout = {
+  about_image_url: "/assets/img/profile/profile-3.jpg",
+  about_name: "Ernanda Revalino",
+  about_title: "Web Development & Data Analyst Aspiring",
+  about_email: "ernandarevalino@gmail.com",
+  about_phone: "+62 857-1020-9622",
+  about_location: "Serpong, Tangerang Selatan",
+  about_maps_url: "https://maps.app.goo.gl/uHZRvx4thS6Nh1PC7",
+  about_heading: "Writing code with purpose, turning data into direction",
+  about_bio_1: "Im an enthusiastic Information Systems student with a strong passion for web development and data analysis. With hands-on experience building from Python CLI systems to Laravel web apps, I always aim to align technology with real business needs.",
+  about_bio_2: "I believe in teamwork is everything, continuous learning, and creating solutions that are not only impressive but also impactful. Currently, Im focusing on deepening my skills in Laravel backend and data analysis tools like Power BI and Looker Studio while continuing to strengthen my Python foundation."
+};
+
+export default function About({ profile }: AboutProps) {
+  const data = {
+    about_image_url: profile?.about_image_url || defaultAbout.about_image_url,
+    about_name: profile?.about_name || defaultAbout.about_name,
+    about_title: profile?.about_title || defaultAbout.about_title,
+    about_email: profile?.about_email || defaultAbout.about_email,
+    about_phone: profile?.about_phone || defaultAbout.about_phone,
+    about_location: profile?.about_location || defaultAbout.about_location,
+    about_maps_url: profile?.about_maps_url || defaultAbout.about_maps_url,
+    about_heading: profile?.about_heading || defaultAbout.about_heading,
+    about_bio_1: profile?.about_bio_1 || defaultAbout.about_bio_1,
+    about_bio_2: profile?.about_bio_2 || defaultAbout.about_bio_2,
+  };
+
   return (
     <section id="about" className="py-20 bg-[#1f1f1f] text-white overflow-hidden">
       <div className="container mx-auto px-4 md:px-8">
@@ -14,10 +65,10 @@ export default function About() {
               
               <div className="relative mb-8">
                 {/* Profile Image with Ring */}
-                <div className="w-[160px] h-[160px] mx-auto rounded-full overflow-hidden border-4 border-[#ececec] shadow-xl">
+                <div className="w-[160px] h-[160px] mx-auto rounded-full overflow-hidden border-4 border-[#ececec] shadow-xl bg-black/20">
                   <img
-                    src="/assets/img/profile/profile-3.jpg"
-                    alt="Ernanda Revalino Profile"
+                    src={data.about_image_url}
+                    alt={`${data.about_name} Profile`}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -28,33 +79,39 @@ export default function About() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold font-ubuntu text-white">Ernanda Revalino</h3>
-                <p className="text-[#ececec] font-medium text-sm">Web Development & Data Analyst Aspiring</p>
+                <h3 className="text-2xl font-bold font-ubuntu text-white">{data.about_name}</h3>
+                <p className="text-[#ececec] font-medium text-sm">{data.about_title}</p>
 
                 <div className="flex flex-col gap-4 pt-4">
-                  <a
-                    href="mailto:ernandarevalino@gmail.com"
-                    className="flex items-center gap-3 px-4 py-3 bg-[#1f1f1f] rounded-xl text-[#ececec] border border-white/10 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20 transition-all duration-300"
-                  >
-                    <BsEnvelope className="text-base shrink-0" />
-                    <span className="text-sm truncate">ernandarevalino@gmail.com</span>
-                  </a>
-                  <a
-                    href="tel:+6285710209622"
-                    className="flex items-center gap-3 px-4 py-3 bg-[#1f1f1f] rounded-xl text-[#ececec] border border-white/10 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20 transition-all duration-300"
-                  >
-                    <BsTelephone className="text-base shrink-0" />
-                    <span className="text-sm">+62 857-1020-9622</span>
-                  </a>
-                  <a
-                    href="https://maps.app.goo.gl/uHZRvx4thS6Nh1PC7"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 bg-[#1f1f1f] rounded-xl text-[#ececec] border border-white/10 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20 transition-all duration-300"
-                  >
-                    <BsGeoAlt className="text-base shrink-0" />
-                    <span className="text-sm text-left">Serpong, Tangerang Selatan</span>
-                  </a>
+                  {data.about_email && (
+                    <a
+                      href={`mailto:${data.about_email}`}
+                      className="flex items-center gap-3 px-4 py-3 bg-[#1f1f1f] rounded-xl text-[#ececec] border border-white/10 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20 transition-all duration-300"
+                    >
+                      <BsEnvelope className="text-base shrink-0" />
+                      <span className="text-sm truncate">{data.about_email}</span>
+                    </a>
+                  )}
+                  {data.about_phone && (
+                    <a
+                      href={`tel:${data.about_phone.replace(/\s+/g, "")}`}
+                      className="flex items-center gap-3 px-4 py-3 bg-[#1f1f1f] rounded-xl text-[#ececec] border border-white/10 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20 transition-all duration-300"
+                    >
+                      <BsTelephone className="text-base shrink-0" />
+                      <span className="text-sm">{data.about_phone}</span>
+                    </a>
+                  )}
+                  {data.about_location && (
+                    <a
+                      href={data.about_maps_url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 bg-[#1f1f1f] rounded-xl text-[#ececec] border border-white/10 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20 transition-all duration-300"
+                    >
+                      <BsGeoAlt className="text-base shrink-0" />
+                      <span className="text-sm text-left truncate">{data.about_location}</span>
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -70,17 +127,13 @@ export default function About() {
                   Get to Know Me
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold font-ubuntu leading-tight text-white">
-                  Writing code with purpose, turning data into direction
+                  {data.about_heading}
                 </h2>
               </div>
 
               <div className="text-[#ececec]/80 text-base md:text-lg leading-relaxed space-y-4">
-                <p>
-                  Im an enthusiastic Information Systems student with a strong passion for web development and data analysis. With hands-on experience building from Python CLI systems to Laravel web apps, I always aim to align technology with real business needs.
-                </p>
-                <p>
-                  I believe in teamwork is everything, continuous learning, and creating solutions that are not only impressive but also impactful. Currently, Im focusing on deepening my skills in Laravel backend and data analysis tools like Power BI and Looker Studio while continuing to strengthen my Python foundation.
-                </p>
+                {data.about_bio_1 && <p>{data.about_bio_1}</p>}
+                {data.about_bio_2 && <p>{data.about_bio_2}</p>}
               </div>
 
             </div>

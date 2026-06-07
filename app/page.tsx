@@ -5,11 +5,14 @@ import Skills from "./components/Skills";
 import Resume from "./components/Resume";
 import Portfolio from "./components/Portfolio";
 import Contact from "./components/Contact";
-import { getProjects } from "@/actions/portfolio";
+import { getProjects, getProfile } from "@/actions/portfolio";
 
 export default async function Home() {
   const response = await getProjects();
   const projects = response?.data || [];
+
+  const profileResponse = await getProfile();
+  const profile = profileResponse?.success ? profileResponse.data : null;
 
   return (
     <div className="min-h-screen bg-[#1f1f1f] text-white">
@@ -20,9 +23,9 @@ export default async function Home() {
       {/* Main Content Areas */}
       <main className="xl:pl-[300px] transition-all duration-300">
         
-        <Hero />
+        <Hero profile={profile} />
         
-        <About />
+        <About profile={profile} />
         
         <Skills />
         

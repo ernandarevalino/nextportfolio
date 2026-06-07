@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { loginAction } from "@/actions/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,28 +17,19 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const res = await loginAction(email, password);
 
-      if (signInError) {
-        throw signInError;
+      if (!res.success) {
+        throw new Error(res.error || "Invalid login credentials. Please try again.");
       }
+      
+      window.location.href = "/admin/dashboard"; 
 
-      // Store the session access token in cookies so the middleware can read it
-      if (data.session) {
-        const accessToken = data.session.access_token;
-        const expiresIn = data.session.expires_in || 3600;
-        document.cookie = `sb-access-token=${accessToken}; path=/; max-age=${expiresIn}; SameSite=Lax; Secure`;
-      }
-
-      router.push("/admin");
     } catch (err: any) {
-      console.error("Login error:", err);
+      console.log("Login failed (handled):", err.message); 
       setError(err.message || "Invalid login credentials. Please try again.");
     } finally {
-      setLoading(false);
+      setLoading(false); 
     }
   };
 

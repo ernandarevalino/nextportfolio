@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { submitContact } from "@/actions/portfolio";
 import { BsGeoAlt, BsTelephone, BsEnvelope } from "react-icons/bs";
 
 export default function Contact() {
@@ -23,25 +23,21 @@ export default function Contact() {
     setStatus("loading");
 
     try {
-      const { error } = await supabase
-        .from("contacts")
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject,
-            message: formData.message
-          }
-        ]);
+      const res = await submitContact({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      });
 
-      if (error) {
-        throw error;
+      if (!res.success) {
+        throw new Error(res.error || "Failed to send message");
       }
 
       setStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      console.error("Error inserting contact into Supabase:", err);
+      console.error("Error sending contact message:", err);
       setStatus("error");
     }
   };

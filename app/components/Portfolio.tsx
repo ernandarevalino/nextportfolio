@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 import {
   BsEmojiSmile,
   BsJournalRichtext,
@@ -58,10 +57,13 @@ const staticPortfolioItems: PortfolioItem[] = [
   }
 ];
 
-export default function Portfolio() {
+interface PortfolioProps {
+  projects?: any[];
+}
+
+export default function Portfolio({ projects = [] }: PortfolioProps) {
   const [activeFilter, setActiveFilter] = useState("all");
-  const [projects, setProjects] = useState<PortfolioItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const loading = false;
 
   const stats: StatItem[] = [
     { icon: BsEmojiSmile, value: "95%", label: "Positive Feedback (%)" },
@@ -78,53 +80,28 @@ export default function Portfolio() {
     { key: "etc", label: "Etc" },
   ];
 
-  useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .order("id", { ascending: true });
+  const mappedProjects: PortfolioItem[] = (projects && projects.length > 0)
+    ? projects.map((item: any) => {
+        // Helper function to map category string to expected key
+        let catKey = "etc";
+        const lowerCat = item.category.toLowerCase();
+        if (lowerCat.includes("web")) catKey = "webdev";
+        else if (lowerCat.includes("analyst") || lowerCat.includes("data")) catKey = "analyst";
+        else if (lowerCat.includes("mobile")) catKey = "mobdev";
 
-        if (error) {
-          throw error;
-        }
-
-        if (data && data.length > 0) {
-          const mapped: PortfolioItem[] = data.map((item: any) => {
-            // Helper function to map category string to expected key
-            let catKey = "etc";
-            const lowerCat = item.category.toLowerCase();
-            if (lowerCat.includes("web")) catKey = "webdev";
-            else if (lowerCat.includes("analyst") || lowerCat.includes("data")) catKey = "analyst";
-            else if (lowerCat.includes("mobile")) catKey = "mobdev";
-
-            return {
-              title: item.title,
-              category: item.category,
-              categoryKey: catKey,
-              imgSrc: item.image_url,
-              githubUrl: item.github_url || "#"
-            };
-          });
-          setProjects(mapped);
-        } else {
-          setProjects(staticPortfolioItems);
-        }
-      } catch (err) {
-        console.warn("Could not load projects from database, using local static data as fallback:", err);
-        setProjects(staticPortfolioItems);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProjects();
-  }, []);
+        return {
+          title: item.title,
+          category: item.category,
+          categoryKey: catKey,
+          imgSrc: item.image_url,
+          githubUrl: item.github_url || "#"
+        };
+      })
+    : staticPortfolioItems;
 
   const filteredItems = activeFilter === "all"
-    ? projects
-    : projects.filter(item => item.categoryKey === activeFilter);
+    ? mappedProjects
+    : mappedProjects.filter(item => item.categoryKey === activeFilter);
 
   return (
     <div className="space-y-20">

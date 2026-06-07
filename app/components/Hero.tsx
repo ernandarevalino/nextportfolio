@@ -138,11 +138,15 @@ export default function Hero() {
             <div className="lg:col-span-6 flex justify-center items-center order-1 lg:order-2">
               <div className="relative w-[280px] h-[280px] md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px]">
                 <div className="absolute top-[15px] left-[15px] w-full h-full bg-[#ececec]/10 border border-white/20 rounded-[30px] z-1"></div>
-                <img
-                  src="https://i.pinimg.com/originals/de/04/f0/de04f0775b510021655fb8f6c95a3de1.gif"
-                  alt="Ernanda profile animation"
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
                   className="relative w-full h-full object-cover rounded-[30px] z-10 border border-white/10"
-                />
+                >
+                  <source src="/image-animation/video-hero.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
 

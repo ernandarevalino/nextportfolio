@@ -5,8 +5,12 @@ import Skills from "./components/Skills";
 import Resume from "./components/Resume";
 import Portfolio from "./components/Portfolio";
 import Contact from "./components/Contact";
+import { getProjects } from "@/actions/portfolio";
 
-export default function Home() {
+export default async function Home() {
+  const response = await getProjects();
+  const projects = response?.data || [];
+
   return (
     <div className="min-h-screen bg-[#1f1f1f] text-white">
       
@@ -24,7 +28,7 @@ export default function Home() {
         
         <Resume />
         
-        <Portfolio />
+        <Portfolio projects={projects} />
         
         <Contact />
 

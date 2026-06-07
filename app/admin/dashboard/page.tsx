@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { logoutAction } from "@/actions/auth";
+import { getProjects, createProject, updateProject, deleteProject } from "@/actions/portfolio";
 import {
   BsPlusLg,
   BsPencilSquare,
@@ -48,13 +49,11 @@ export default function AdminDashboard() {
   async function fetchProjects() {
     setLoading(true);
     try {
-      const { data, error: fetchError } = await supabase
-        .from("projects")
-        .select("*")
-        .order("id", { ascending: true });
-
-      if (fetchError) throw fetchError;
-      setProjects(data || []);
+      const res = await getProjects();
+      if (!res.success) {
+        throw new Error(res.error);
+      }
+      setProjects(res.data || []);
     } catch (err: any) {
       console.error("Error fetching projects:", err);
       setError("Failed to load projects from database.");
@@ -100,37 +99,31 @@ export default function AdminDashboard() {
     try {
       if (editingProject) {
         // UPDATE operation
-        const { error: updateError } = await supabase
-          .from("projects")
-          .update({
-            title: formData.title,
-            category: formData.category,
-            image_url: formData.image_url,
-            github_url: formData.github_url,
-            details: formData.details
-          })
-          .eq("id", editingProject.id);
+        const res = await updateProject(editingProject.id, {
+          title: formData.title,
+          category: formData.category,
+          image_url: formData.image_url,
+          github_url: formData.github_url,
+          details: formData.details
+        });
 
-        if (updateError) throw updateError;
+        if (!res.success) throw new Error(res.error);
       } else {
         // INSERT operation
-        const { error: insertError } = await supabase
-          .from("projects")
-          .insert([
-            {
-              title: formData.title,
-              category: formData.category,
-              image_url: formData.image_url,
-              github_url: formData.github_url,
-              details: formData.details
-            }
-          ]);
+        const res = await createProject({
+          title: formData.title,
+          category: formData.category,
+          image_url: formData.image_url,
+          github_url: formData.github_url,
+          details: formData.details
+        });
 
-        if (insertError) throw insertError;
+        if (!res.success) throw new Error(res.error);
       }
 
       setIsModalOpen(false);
-      fetchProjects();
+      router.refresh();
+      await fetchProjects();
     } catch (err: any) {
       console.error("Error saving project:", err);
       setError(err.message || "Failed to save project. Please check fields and try again.");
@@ -145,13 +138,11 @@ export default function AdminDashboard() {
     if (!confirmed) return;
 
     try {
-      const { error: deleteError } = await supabase
-        .from("projects")
-        .delete()
-        .eq("id", id);
-
-      if (deleteError) throw deleteError;
-      fetchProjects();
+      const res = await deleteProject(id);
+      if (!res.success) throw new Error(res.error);
+      
+      router.refresh();
+      await fetchProjects();
     } catch (err: any) {
       console.error("Error deleting project:", err);
       alert("Failed to delete project: " + err.message);
@@ -161,10 +152,12 @@ export default function AdminDashboard() {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
-      document.cookie = "sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure";
+      const res = await logoutAction();
+      if (res && !res.success) {
+        throw new Error(res.error);
+      }
       router.push("/login");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error signing out:", err);
     }
   };

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { getSkills } from "@/actions/portfolio";
+import { BsCheckCircle } from "react-icons/bs";
+import ScrollReveal from "./ScrollReveal";
 
 interface Skill {
   id?: number;
@@ -60,81 +62,129 @@ export default function Skills() {
     return { title, skills: catSkills };
   }).filter(cat => cat.skills.length > 0);
 
+  // Helper to return modern aesthetic badges per category
+  const getCategoryMeta = (title: string) => {
+    switch (title) {
+      case "Soft Skills":
+        return { desc: "Interpersonal & leadership strengths", countColor: "text-white/40" };
+      case "Back-end Development":
+        return { desc: "Scalable APIs, databases, & architectures", countColor: "text-white/40" };
+      case "UI/UX & Frontend Development":
+        return { desc: "Pixel-perfect & responsive client interfaces", countColor: "text-white/40" };
+      case "Data Analyst Tools":
+        return { desc: "Data insights, dashboards, & statistics", countColor: "text-white/40" };
+      default:
+        return { desc: "Professional technical capabilities", countColor: "text-white/40" };
+    }
+  };
+
   return (
-    <section id="skills" className="py-20 bg-[#1f1f1f] text-white">
-      <div className="container mx-auto px-4 md:px-8">
+    <section id="skills" className="py-24 bg-[#1f1f1f] text-white relative">
+      
+      {/* Background Tech Accent */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.01] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
         
         {/* Section Header */}
         <div className="section-title text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold font-ubuntu tracking-wide text-white uppercase inline-block">
-            Skills
-          </h2>
-          <p className="text-[#ececec]/70 mt-4 text-base md:text-lg">
-            Skills I've Gained Through Real Projects.
-          </p>
+          <ScrollReveal delay={0}>
+            <h2 className="text-3xl md:text-5xl font-black font-ubuntu tracking-tight text-white uppercase mt-4">
+              My Expertise
+            </h2>
+            <p className="text-[#ececec]/60 mt-3 text-base md:text-lg max-w-xl mx-auto font-['Nunito']">
+              Proven capabilities and technical tools I use to turn ideas into fully operational digital products.
+            </p>
+          </ScrollReveal>
         </div>
 
         {/* Loading Spinner */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <div className="flex flex-col items-center justify-center py-24 space-y-4">
             <div className="w-12 h-12 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-[#ececec]/60">Fetching skills...</p>
+            <p className="text-[#ececec]/50 text-sm font-medium">Fetching expertise metrics...</p>
           </div>
         ) : groupedCategories.length === 0 ? (
-          <div className="text-center py-20 text-[#ececec]/60">
-            No skills to display. Silakan tambahkan melalui Admin Dashboard.
+          <div className="text-center py-24 text-[#ececec]/60 bg-white/[0.01] rounded-3xl border border-white/5 max-w-lg mx-auto">
+            <p className="font-['Nunito'] font-medium mb-4">No skills registered yet.</p>
+            <p className="text-xs text-[#ececec]/40">Add skills using your admin dashboard.</p>
           </div>
         ) : (
-          /* Skills Grid */
+          /* Premium Bento-Style Skills Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {groupedCategories.map((category) => (
-              <div
-                key={category.title}
-                className={`bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6 ${
-                  category.title === "Data Analyst Tools" ? "md:col-span-2 max-w-4xl mx-auto w-full" : ""
-                }`}
-              >
-                <h3 className="text-xl font-bold font-ubuntu text-white border-b border-white/10 pb-3">
-                  {category.title}
-                </h3>
-                
-                <div className="space-y-5">
-                  {category.skills.map((skill) => (
-                    <div key={skill.name} className="relative group">
-                      
-                      {/* Label & Percentage */}
+            {groupedCategories.map((category, idx) => {
+              const meta = getCategoryMeta(category.title);
+              return (
+                <ScrollReveal
+                  key={category.title}
+                  delay={idx * 150}
+                  className="w-full"
+                >
+                  <div
+                    className="bg-gradient-to-br from-[#232323] to-[#202020] p-8 md:p-10 rounded-[2.5rem] border border-white/5 hover:border-white/10 shadow-2xl space-y-8 transition-all duration-500 hover:shadow-white/[0.01] group h-full"
+                  >
+                    {/* Category Header */}
+                    <div className="space-y-1.5 border-b border-white/5 pb-5">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm md:text-base font-semibold text-[#ececec]">
-                          {skill.name}
-                        </span>
-                        <span className="text-sm font-bold text-white/90 bg-white/5 px-2 py-[2px] rounded">
-                          {skill.percentage}%
+                        <h3 className="text-xl font-bold font-ubuntu text-white tracking-wide">
+                          {category.title}
+                        </h3>
+                        <span className={`text-xs font-mono ${meta.countColor}`}>
+                          {category.skills.length} {category.skills.length === 1 ? 'Skill' : 'Skills'}
                         </span>
                       </div>
-
-                      {/* Progress Bar Container */}
-                      <div className="w-full h-[6px] bg-white/10 rounded-full mt-2 overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-white/40 to-[#ececec] rounded-full transition-all duration-500"
-                          style={{ width: `${skill.percentage}%` }}
-                        ></div>
-                      </div>
-
-                      {/* Tooltip on Hover */}
-                      {skill.tooltip && (
-                        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[#ececec] text-[#310606] text-xs py-2 px-3 rounded-lg shadow-xl w-max max-w-[260px] text-center z-30 font-medium">
-                          {skill.tooltip}
-                          {/* Triangle Pointer */}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-[#ececec]"></div>
-                        </div>
-                      )}
-
+                      <p className="text-xs text-[#ececec]/40 font-medium font-['Nunito'] tracking-wide">
+                        {meta.desc}
+                      </p>
                     </div>
-                  ))}
-                </div>
+                    
+                    {/* Skill Items Bento Box List with subtle micro staggered animation triggers inside bento cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {category.skills.map((skill, skillIdx) => (
+                        <div
+                          key={skill.name}
+                          className="relative group/skill p-4 bg-white/[0.015] hover:bg-white/[0.04] border border-white/[0.03] hover:border-white/10 rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
+                          style={{
+                            animationDelay: `${skillIdx * 75}ms`
+                          }}
+                        >
+                          {/* Label & Dynamic Percentage Badges */}
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-center gap-2 truncate">
+                              <BsCheckCircle className="text-white/40 group-hover/skill:text-white shrink-0 text-xs transition-colors" />
+                              <span className="text-sm font-bold text-[#ececec]/90 group-hover/skill:text-white transition-colors truncate font-['Nunito']">
+                                {skill.name}
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-bold text-white bg-white/5 px-2 py-[2px] rounded border border-white/5">
+                              {skill.percentage}%
+                            </span>
+                          </div>
 
-              </div>
-            ))}
+                          {/* Progress Bar Track */}
+                          <div className="w-full h-[5px] bg-white/5 rounded-full mt-2.5 overflow-hidden border border-white/5">
+                            <div
+                              className="h-full bg-gradient-to-r from-white/30 to-[#ececec] rounded-full transition-all duration-1000"
+                              style={{ width: `${skill.percentage}%` }}
+                            ></div>
+                          </div>
+
+                          {/* High-Fidelity Animated Tooltip on Hover */}
+                          {skill.tooltip && (
+                            <div className="absolute opacity-0 translate-y-1 group-hover/skill:opacity-100 group-hover/skill:translate-y-0 transition-all duration-300 pointer-events-none bottom-full mb-3 left-1/2 -translate-x-1/2 bg-[#ececec] text-[#1f1f1f] text-xs py-2 px-4 rounded-xl shadow-2xl w-max max-w-[240px] text-center z-30 font-bold">
+                              <span className="relative z-10 leading-relaxed block">{skill.tooltip}</span>
+                              {/* Triangle Indicator */}
+                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[#ececec]"></div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                  </div>
+                </ScrollReveal>
+              );
+            })}
           </div>
         )}
 

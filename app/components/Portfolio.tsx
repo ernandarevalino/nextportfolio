@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import {
-  BsEye,
-  BsGithub
-} from "react-icons/bs";
+import { useState, useEffect } from "react";
+import { BsEye, BsGithub, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
+import ScrollReveal from "./ScrollReveal";
 
 interface PortfolioItem {
   id: number;
@@ -23,6 +21,8 @@ interface PortfolioProps {
 
 export default function Portfolio({ projects = [] }: PortfolioProps) {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
   const loading = false;
 
   const filters = [
@@ -35,7 +35,6 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
 
   const mappedProjects: PortfolioItem[] = (projects && projects.length > 0)
     ? projects.map((item: any) => {
-        // Helper function to map category string to expected key
         let catKey = "etc";
         const lowerCat = item.category.toLowerCase();
         if (lowerCat.includes("web")) catKey = "webdev";
@@ -57,120 +56,215 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
     ? mappedProjects
     : mappedProjects.filter(item => item.categoryKey === activeFilter);
 
-  return (
-    <div className="space-y-20">
-      
-      {/* Portfolio Gallery Section */}
-      <section id="portfolio" className="py-20 bg-[#1f1f1f] text-white">
-        <div className="container mx-auto px-4 md:px-8">
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleFilterChange = (key: string) => {
+    setActiveFilter(key);
+    setCurrentPage(1);
+  };
+
+  // FIX: Menggunakan micro-intervals & behavior "auto" agar langsung SPAWN instan
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash === "#portfolio") {
+      const spawnToPortfolio = () => {
+        const el = document.getElementById("portfolio");
+        if (el) {
+          const headerOffset = 80; // Sesuaikan dengan tinggi navbar kamu
+          const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - headerOffset;
           
-          {/* Section Title */}
-          <div className="section-title text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold font-ubuntu tracking-wide text-white uppercase inline-block">
-              Portfolio
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "auto" // "auto" akan memaksa halaman langsung SPAWN di tempat tanpa animasi scroll
+          });
+        }
+      };
+
+      // Eksekusi instan saat pertama kali mendarat
+      spawnToPortfolio();
+
+      // Tembakan beruntun super cepat untuk menahan posisi koordinat 
+      // dari hantaman efek Layout Shift animasi ScrollReveal komponen Skills/Resume di atasnya
+      const t1 = setTimeout(spawnToPortfolio, 30);
+      const t2 = setTimeout(spawnToPortfolio, 100);
+      const t3 = setTimeout(spawnToPortfolio, 200);
+      const t4 = setTimeout(spawnToPortfolio, 400);
+
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        clearTimeout(t4);
+      };
+    }
+  }, []);
+
+  return (
+    // Ditambahkan class 'scroll-mt-20' (80px) agar anchor bawaan browser juga ikut presisi sejak awal
+    <section id="portfolio" className="py-24 bg-[#1f1f1f] text-white relative scroll-mt-20">
+      
+      {/* Background Tech Accent */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.01] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]"></div>
+
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
+        
+        {/* Section Title */}
+        <div className="section-title text-center mb-16">
+          <ScrollReveal delay={0}>
+            <h2 className="text-3xl md:text-5xl font-black font-ubuntu tracking-tight text-white uppercase mt-4">
+              Projects
             </h2>
-            <p className="text-[#ececec]/70 mt-4 text-base md:text-lg">
-              A collection of projects i built from curiosity — here is my portfolio.
+            <p className="text-[#ececec]/60 mt-3 text-base md:text-lg max-w-xl mx-auto font-['Nunito']">
+              A curated showcase of real-world products, dashboards, and apps I built to solve technical challenges.
             </p>
+          </ScrollReveal>
+        </div>
+
+        {/* Clean flowing layout with centered top category tabs and full width gallery */}
+        <div className="flex flex-col space-y-12 w-full">
+          
+          {/* Top Horizontal Tab Bar */}
+          <div className="flex justify-center w-full">
+            <ScrollReveal delay={150} className="w-full max-w-7xl">
+              <div className="bg-gradient-to-r from-[#232323] to-[#202020] p-2 rounded-2xl md:rounded-full border border-white/5 shadow-2xl flex overflow-x-auto scrollbar-none whitespace-nowrap flex-nowrap md:flex-wrap md:justify-center gap-2">
+                {filters.map((filter) => (
+                  <button
+                    key={filter.key}
+                    onClick={() => handleFilterChange(filter.key)}
+                    className={`px-6 py-3 rounded-xl md:rounded-full text-xs md:text-sm font-bold transition-all duration-300 cursor-pointer shrink-0 ${
+                      activeFilter === filter.key
+                        ? "bg-[#ececec] text-[#1f1f1f] shadow-lg shadow-white/5"
+                        : "text-[#ececec]/60 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            {/* Filtering Sidebar */}
-            <div className="lg:col-span-3">
-              <div className="bg-[#232323] p-6 rounded-[2rem] border border-white/10 shadow-xl space-y-4 lg:sticky lg:top-8">
-                <h3 className="text-lg font-bold font-ubuntu text-white border-b border-white/10 pb-3 pl-2">
-                  Categories
-                </h3>
-                <ul className="space-y-2">
-                  {filters.map((filter) => (
-                    <li key={filter.key}>
-                      <button
-                        onClick={() => setActiveFilter(filter.key)}
-                        className={`w-full text-left px-4 py-3 rounded-xl text-sm md:text-base font-semibold transition-all duration-300 ${
-                          activeFilter === filter.key
-                            ? "bg-[#ececec] text-[#310606]"
-                            : "text-[#ececec]/70 hover:bg-white/5 hover:text-white"
-                        }`}
-                      >
-                        {filter.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+          {/* Gallery Content (Full Width aligned with filter bar) */}
+          <div className="w-full">
+            {loading ? (
+              <div className="bg-gradient-to-br from-[#232323] to-[#202020] p-16 rounded-[2.5rem] text-center border border-white/5 flex flex-col items-center justify-center space-y-4 shadow-xl">
+                <div className="w-10 h-10 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[#ececec]/50 text-sm font-medium">Loading projects...</p>
               </div>
-            </div>
-
-            {/* Gallery Content */}
-            <div className="lg:col-span-9">
-              {loading ? (
-                <div className="bg-[#232323] p-12 rounded-[2rem] text-center border border-white/10 flex flex-col items-center justify-center space-y-4">
-                  <div className="w-10 h-10 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-[#ececec]/60">Loading projects...</p>
-                </div>
-              ) : filteredItems.length === 0 ? (
-                <div className="bg-[#232323] p-12 rounded-[2rem] text-center border border-white/10">
-                  <p className="text-[#ececec]/60">No projects found in this category.</p>
-                </div>
-              ) : (
+            ) : filteredItems.length === 0 ? (
+              <div className="bg-gradient-to-br from-[#232323] to-[#202020] p-16 rounded-[2.5rem] text-center border border-white/5 shadow-xl">
+                <p className="text-[#ececec]/50 font-['Nunito'] font-medium">No projects found in this category.</p>
+              </div>
+            ) : (
+              <>
+                {/* Beautiful Grid with Zoom & Slide Overlay using Staggered Reveals */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-500">
-                  {filteredItems.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="group relative overflow-hidden rounded-[2rem] bg-[#232323] border border-white/10 shadow-xl"
-                    >
-                      {/* Image Frame */}
-                      <div className="aspect-[4/3] w-full overflow-hidden">
-                        <img
-                          src={item.imgSrc}
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                      </div>
-
-                      {/* Information Overlay */}
-                      <div className="absolute inset-0 bg-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-8 text-center space-y-4">
-                        <span className="text-xs font-semibold tracking-wider text-[#ececec]/75 uppercase">
-                          {item.category}
-                        </span>
-                        <h4 className="text-xl font-bold font-ubuntu text-white">
-                          {item.title}
-                        </h4>
-                        
-                        {/* Links inside overlay */}
-                        <div className="flex gap-4 pt-2">
-                          {item.githubUrl && item.githubUrl !== "#" && (
-                            <a
-                              href={item.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-11 h-11 bg-[#ececec] text-[#310606] rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300"
-                              title="View Github Repo"
-                            >
-                              <BsGithub className="text-lg" />
-                            </a>
-                          )}
-                          <Link
-                            href={`/portfolio/${item.id}`}
-                            className="w-11 h-11 bg-[#ececec] text-[#310606] rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300"
-                            title="View Details"
-                          >
-                            <BsEye className="text-lg" />
-                          </Link>
+                  {paginatedItems.map((item, idx) => (
+                    <ScrollReveal key={item.id || idx} delay={idx * 150}>
+                      <div
+                        className="group relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#232323] to-[#202020] border border-white/5 hover:border-white/10 shadow-2xl transition-all duration-500 hover:shadow-white/[0.01] h-full"
+                      >
+                        {/* Image Frame with overflow hidden */}
+                        <div className="aspect-[4/3] w-full overflow-hidden relative bg-black/20">
+                          <img
+                            src={item.imgSrc}
+                            alt={item.title}
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                            onError={(e) => {
+                              e.currentTarget.src = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600";
+                            }}
+                          />
                         </div>
-                      </div>
 
-                    </div>
+                        {/* Premium Glassmorphic Information Overlay (Fully Animated) */}
+                        <div className="absolute inset-0 bg-[#1f1f1f]/90 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center items-center p-8 text-center space-y-4 animate-fade-in">
+                          {/* Floating Category with slide down */}
+                          <span className="text-[10px] font-bold tracking-widest text-[#ececec]/50 uppercase translate-y-[-10px] group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                            {item.category}
+                          </span>
+                          
+                          {/* Floating Title with slide up */}
+                          <h4 className="text-xl md:text-2xl font-black font-ubuntu text-white tracking-wide leading-tight px-4 translate-y-[10px] group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                            {item.title}
+                          </h4>
+                          
+                          {/* Interactive Buttons with delay */}
+                          <div className="flex gap-4 pt-3 translate-y-[15px] group-hover:translate-y-0 transition-all duration-500 delay-100 ease-out">
+                            {item.githubUrl && item.githubUrl !== "#" && (
+                              <a
+                                href={item.githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-12 h-12 bg-white/5 hover:bg-[#ececec] text-white hover:text-[#1f1f1f] border border-white/10 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg cursor-pointer"
+                                title="View GitHub Repository"
+                              >
+                                <BsGithub className="text-lg" />
+                              </a>
+                            )}
+                            <Link
+                              href={`/portfolio/${item.id}`}
+                              className="w-12 h-12 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg cursor-pointer"
+                              title="View Case Study Details"
+                            >
+                              <BsEye className="text-lg" />
+                            </Link>
+                          </div>
+                        </div>
+
+                      </div>
+                    </ScrollReveal>
                   ))}
                 </div>
-              )}
-            </div>
 
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <ScrollReveal delay={100}>
+                    <div className="flex justify-center items-center space-x-4 md:space-x-6 mt-12">
+                      <button
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className={`flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#232323] to-[#202020] border border-white/5 shadow-xl transition-all duration-300 ${
+                          currentPage === 1
+                            ? "opacity-40 cursor-not-allowed"
+                            : "hover:bg-white/5 hover:border-white/10 active:scale-95 cursor-pointer"
+                        }`}
+                        aria-label="Previous Page"
+                      >
+                        <BsChevronLeft className="text-lg text-[#ececec]" />
+                      </button>
+
+                      <span className="text-sm font-bold font-['Nunito'] text-[#ececec]/80 tracking-wide bg-gradient-to-r from-[#232323] to-[#202020] px-5 py-3 rounded-xl border border-white/5 shadow-xl">
+                        Page <span className="text-white">{currentPage}</span> of{" "}
+                        <span className="text-white">{totalPages}</span>
+                      </span>
+
+                      <button
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className={`flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#232323] to-[#202020] border border-white/5 shadow-xl transition-all duration-300 ${
+                          currentPage === totalPages
+                            ? "opacity-40 cursor-not-allowed"
+                            : "hover:bg-white/5 hover:border-white/10 active:scale-95 cursor-pointer"
+                        }`}
+                        aria-label="Next Page"
+                      >
+                        <BsChevronRight className="text-lg text-[#ececec]" />
+                      </button>
+                    </div>
+                  </ScrollReveal>
+                )}
+              </>
+            )}
           </div>
 
         </div>
-      </section>
 
-    </div>
+      </div>
+    </section>
   );
 }

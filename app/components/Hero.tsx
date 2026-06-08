@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BsGithub, BsLinkedin, BsInstagram } from "react-icons/bs";
+import { BsGithub, BsLinkedin, BsInstagram, BsArrowRight } from "react-icons/bs";
+import ScrollReveal from "./ScrollReveal";
 
 interface Profile {
   id: number;
@@ -23,7 +24,6 @@ function Typewriter({ words, speed = 100, delay = 2000 }: { words: string[]; spe
   useEffect(() => {
     if (!words || words.length === 0) return;
 
-    // Reset index if out of bounds (e.g. if typewriter list changed)
     if (currentWordIndex >= words.length) {
       setCurrentWordIndex(0);
       setCurrentText("");
@@ -61,7 +61,7 @@ function Typewriter({ words, speed = 100, delay = 2000 }: { words: string[]; spe
   if (!words || words.length === 0) return null;
 
   return (
-    <span className="border-r-2 border-white/60 pr-1 animate-pulse text-[#ececec]">
+    <span className="border-r-2 border-white/60 pr-1.5 animate-pulse text-white font-semibold">
       {currentText}
     </span>
   );
@@ -73,113 +73,143 @@ interface HeroProps {
 
 export default function Hero({ profile }: HeroProps) {
   const data = {
-    hero_title: profile?.hero_title || "",
-    hero_name: profile?.hero_name || "",
-    hero_description: profile?.hero_description || "",
-    typewriter_words: profile?.typewriter_words || [],
-    github_url: profile?.github_url || "",
-    linkedin_url: profile?.linkedin_url || "",
-    instagram_url: profile?.instagram_url || "",
+    hero_title: profile?.hero_title || "Creative Developer",
+    hero_name: profile?.hero_name || "Ernanda Revalino",
+    hero_description: profile?.hero_description || "Passionate about designing and constructing state-of-the-art web applications that bridge elegance, usability, and modern high performance.",
+    typewriter_words: profile?.typewriter_words || ["Frontend Developer", "Data Analyst", "React Enthusiast"],
+    github_url: profile?.github_url || "https://github.com/ernandarevalino",
+    linkedin_url: profile?.linkedin_url || "https://www.linkedin.com/in/ernanda-revalino-493751246",
+    instagram_url: profile?.instagram_url || "https://instagram.com",
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center overflow-hidden py-12 lg:py-0">
+    <section id="hero" className="relative min-h-screen flex items-center overflow-hidden py-24 lg:py-0 bg-[#1f1f1f]">
       
-      {/* Floating Background Circles */}
-      <div className="absolute inset-0 z-1 pointer-events-none overflow-hidden">
-        <div className="absolute w-[300px] h-[300px] rounded-full bg-gradient-to-tr from-[#ececec]/10 to-[#ececec]/5 top-[10%] right-[10%] animate-float circle-1"></div>
-        <div className="absolute w-[200px] h-[200px] rounded-full bg-gradient-to-tr from-[#ececec]/10 to-[#ececec]/5 bottom-[20%] left-[5%] animate-float circle-2" style={{ animationDelay: "2s" }}></div>
+      {/* Premium Tech Subtle Background Grid */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      
+      {/* Floating Background Circles with Smooth Glows */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-white/[0.02] blur-3xl top-[5%] right-[10%] animate-float"></div>
+        <div className="absolute w-[300px] h-[300px] rounded-full bg-white/[0.015] blur-2xl bottom-[15%] left-[5%] animate-float" style={{ animationDelay: "3s" }}></div>
       </div>
 
-      <div className="relative w-full z-10 px-4 md:px-8">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Text Intro Column */}
-            <div className="lg:col-span-6 text-center lg:text-left order-2 lg:order-1">
-              <div className="space-y-6">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold font-ubuntu leading-tight">
-                  <span className="relative inline-block text-white">
-                    {data.hero_title}
-                    <span className="absolute bottom-[-5px] left-0 w-full h-[3px] bg-gradient-to-r from-[#ececec] to-[#ececec]/50"></span>
+      {/* DISINI PERUBAHANNYA: Menambahkan lg:-translate-y-12 agar posisi konten naik ke atas secara proporsional */}
+      <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10 lg:-translate-y-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          
+          {/* Text Intro Column */}
+          <div className="lg:col-span-7 text-center lg:text-left order-2 lg:order-1">
+            <ScrollReveal delay={0}>
+              <div className="space-y-8 max-w-2xl mx-auto lg:mx-0">
+
+                {/* Massive Typography Headline */}
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black font-ubuntu leading-[1.05] tracking-tight text-white">
+                  My Name Is <br />
+                  <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-[#ececec] to-white/70">
+                    {data.hero_name}
                   </span>
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-[#ececec]/90">
-                  My Name Is <span className="text-2xl md:text-3xl font-bold text-white">{data.hero_name}</span>
-                </p>
-
-                <p className="text-xl md:text-2xl font-['Nunito'] text-white/80">
+                {/* Typing Effect Container */}
+                <p className="text-lg md:text-2xl font-['Nunito'] text-[#ececec]/80">
                   I'm a <Typewriter words={data.typewriter_words} />
                 </p>
 
-                <p className="text-[#ececec]/80 text-base md:text-lg max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                {/* Description */}
+                <p className="text-[#ececec]/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 font-['Nunito']">
                   {data.hero_description}
                 </p>
 
-                <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-2">
-                  <a
-                    href="#portfolio"
-                    className="px-8 py-[14px] text-base font-semibold rounded-full border-2 border-[#ececec] bg-[#ececec] text-[#310606] hover:bg-transparent hover:text-[#ececec] transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-[#ececec]/20"
-                  >
-                    View My Work
-                  </a>
-                  <a
-                    href="#contact"
-                    className="px-8 py-[14px] text-base font-semibold rounded-full border-2 border-[#ececec] bg-transparent text-[#ececec] hover:bg-[#ececec] hover:text-[#310606] transition-all duration-300 hover:-translate-y-1"
-                  >
-                    Get In Touch
-                  </a>
-                </div>
+                {/* Action Buttons & Social Icons Wrapper */}
+                <div className="flex flex-col lg:flex-row lg:items-center gap-6 pt-4">
+                  {/* Interactive Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a
+                      href="#portfolio"
+                      className="group px-8 py-4 text-sm md:text-base font-bold rounded-full bg-[#ececec] text-[#1f1f1f] hover:bg-white hover:scale-105 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center gap-2 shadow-lg shadow-white/5 cursor-pointer"
+                    >
+                      <span>View My Work</span>
+                      <BsArrowRight className="text-base group-hover:translate-x-1 transition-transform duration-300" />
+                    </a>
+                    <a
+                      href="#contact"
+                      className="px-8 py-4 text-sm md:text-base font-bold rounded-full bg-white/5 text-[#ececec] border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-105 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 ease-out flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Get In Touch</span>
+                    </a>
+                  </div>
 
-                <div className="flex gap-4 justify-center lg:justify-start pt-4">
-                  {data.instagram_url && (
-                    <a
-                      href={data.instagram_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-[50px] h-[50px] flex items-center justify-center bg-[#232323] text-[#ececec]/60 rounded-full text-xl transition-all duration-300 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20"
-                    >
-                      <BsInstagram />
-                    </a>
-                  )}
-                  {data.github_url && (
-                    <a
-                      href={data.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-[50px] h-[50px] flex items-center justify-center bg-[#232323] text-[#ececec]/60 rounded-full text-xl transition-all duration-300 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20"
-                    >
-                      <BsGithub />
-                    </a>
-                  )}
-                  {data.linkedin_url && (
-                    <a
-                      href={data.linkedin_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-[50px] h-[50px] flex items-center justify-center bg-[#232323] text-[#ececec]/60 rounded-full text-xl transition-all duration-300 hover:bg-[#ececec] hover:text-[#310606] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#ececec]/20"
-                    >
-                      <BsLinkedin />
-                    </a>
-                  )}
+                  {/* Premium Social Media Icons */}
+                  <div className="flex gap-3 justify-center lg:justify-start">
+                    {data.instagram_url && (
+                      <a
+                        href={data.instagram_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/5 text-[#ececec]/60 rounded-full text-lg transition-all duration-300 hover:bg-[#ececec] hover:text-[#1f1f1f] hover:-translate-y-1 hover:shadow-lg hover:shadow-white/5"
+                        aria-label="Instagram"
+                      >
+                        <BsInstagram />
+                      </a>
+                    )}
+                    {data.github_url && (
+                      <a
+                        href={data.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/5 text-[#ececec]/60 rounded-full text-lg transition-all duration-300 hover:bg-[#ececec] hover:text-[#1f1f1f] hover:-translate-y-1 hover:shadow-lg hover:shadow-white/5"
+                        aria-label="GitHub"
+                      >
+                        <BsGithub />
+                      </a>
+                    )}
+                    {data.linkedin_url && (
+                      <a
+                        href={data.linkedin_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/5 text-[#ececec]/60 rounded-full text-lg transition-all duration-300 hover:bg-[#ececec] hover:text-[#1f1f1f] hover:-translate-y-1 hover:shadow-lg hover:shadow-white/5"
+                        aria-label="LinkedIn"
+                      >
+                        <BsLinkedin />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Visual Column */}
-            <div className="lg:col-span-6 flex justify-center items-center order-1 lg:order-2">
-              <div className="relative w-[280px] h-[280px] md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px]">
-                <div className="absolute top-[15px] left-[15px] w-full h-full bg-[#ececec]/10 border border-white/20 rounded-[30px] z-1"></div>
-                <img
-                  src="/image-animation/video-1.gif"
-                  alt="Hero"
-                  className="relative w-full h-full object-cover rounded-[30px] z-10 border border-white/10"
-                />
-              </div>
-            </div>
-
+            </ScrollReveal>
           </div>
+
+          {/* Visual Column */}
+          <div className="lg:col-span-5 flex justify-center items-center order-1 lg:order-2">
+            <ScrollReveal delay={200}>
+              <div className="relative w-[280px] h-[280px] md:w-[380px] md:h-[380px] lg:w-[420px] lg:h-[420px] group">
+                
+                {/* Modern Decorative Glow Backdrop */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-white/0 rounded-[2.5rem] blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
+                
+                {/* Background Rotating Frame Accent */}
+                <div className="absolute -inset-1 bg-white/5 border border-white/10 rounded-[2.5rem] -z-10 group-hover:scale-102 group-hover:rotate-1 transition-all duration-500"></div>
+                
+                {/* Actual Image Frame */}
+                <div className="relative w-full h-full rounded-[2.2rem] overflow-hidden border border-white/10 bg-[#232323] shadow-2xl">
+                  <img
+                    src="/image-animation/video-1.gif"
+                    alt="Hero animation"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  
+                  {/* Interactive Glassmorphic Headline Tag inside image frame */}
+                  <div className="absolute bottom-6 left-6 z-20 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-white text-xs font-semibold uppercase tracking-wider opacity-0 translate-y-3 scale-95 pointer-events-none transition-all duration-500 ease-out delay-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100">
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    {data.hero_title}
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+
         </div>
       </div>
 

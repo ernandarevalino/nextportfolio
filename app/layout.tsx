@@ -23,9 +23,13 @@ const nunito = Nunito({
   style: ["normal", "italic"],
 });
 
+// Di sini perubahan digabungkan 👇
 export const metadata: Metadata = {
   title: "Ernanda Revalino - Portfolio",
   description: "Web Development & Data Analyst Aspiring portfolio website",
+  icons: {
+    icon: "/image-animation/icon-1.png", // Sesuaikan dengan nama & format gambar kamu di folder 'public' (misal: /logo.png)
+  },
 };
 
 export default function RootLayout({

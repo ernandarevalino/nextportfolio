@@ -22,11 +22,17 @@
   --nav-font: var(--font-nunito), sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--default-font);
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 /* Float Animations */
@@ -97,7 +103,7 @@ body {
 /* Stats Counter Wrapper */
 .stats-wrapper {
   display: grid;
-  grid-template-cols: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 30px;
 }
 

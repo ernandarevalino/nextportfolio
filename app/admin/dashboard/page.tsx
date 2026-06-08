@@ -800,90 +800,94 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1f1f1f] text-white font-sans p-6 md:p-12">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#1f1f1f] text-[#ececec] font-sans p-4 sm:p-6 md:p-12 selection:bg-white/10">
+      <div className="max-w-6xl mx-auto space-y-10">
         
         {/* Navigation & Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-6">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold font-ubuntu text-white">Admin Dashboard</h1>
-            <p className="text-sm text-[#ececec]/60">Manage your portfolio projects and hero profile dynamically</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/5 pb-8">
+          <div className="space-y-1.5">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-ubuntu text-white">
+              Admin Panel
+            </h1>
+            <p className="text-sm text-[#ececec]/60">
+              Manage your portfolio sections, projects, and dynamic components.
+            </p>
           </div>
           
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <button
               onClick={() => router.push("/")}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-sm font-semibold cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl hover:bg-white/[0.08] hover:border-white/20 transition-all duration-300 text-sm font-medium cursor-pointer hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
             >
-              <BsArrowLeft /> View Site
+              <BsArrowLeft className="text-xs" /> View Site
             </button>
             <button
               onClick={handleLogout}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600/90 text-white rounded-full hover:bg-red-700 transition-all text-sm font-semibold cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-red-500/[0.08] border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/20 hover:text-red-300 transition-all duration-300 text-sm font-medium cursor-pointer hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
             >
-              <BsBoxArrowRight /> Logout
+              <BsBoxArrowRight className="text-xs" /> Logout
             </button>
           </div>
         </div>
 
-        {/* Tab System - MENJADI 5 TAB MENU */}
-        <div className="flex flex-wrap gap-4 md:gap-6 border-b border-white/10 pb-1">
+        {/* Tab System - Sleek Capsule Pill Style */}
+        <div className="flex gap-1.5 bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab("projects")}
-            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "projects"
-                ? "border-[#ececec] text-white"
-                : "border-transparent text-[#ececec]/60 hover:text-white"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
             }`}
           >
             Manage Projects
           </button>
           <button
             onClick={() => setActiveTab("hero")}
-            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "hero"
-                ? "border-[#ececec] text-white"
-                : "border-transparent text-[#ececec]/60 hover:text-white"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
             }`}
           >
-            Edit Hero & Socials
+            Hero & Socials
           </button>
           <button
             onClick={() => setActiveTab("about")}
-            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "about"
-                ? "border-[#ececec] text-white"
-                : "border-transparent text-[#ececec]/60 hover:text-white"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
             }`}
           >
-            Edit About Profile
+            About Profile
           </button>
           <button
             onClick={() => setActiveTab("skills")}
-            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "skills"
-                ? "border-[#ececec] text-white"
-                : "border-transparent text-[#ececec]/60 hover:text-white"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
             }`}
           >
             Manage Skills
           </button>
           <button
             onClick={() => setActiveTab("resume")}
-            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "resume"
-                ? "border-[#ececec] text-white"
-                : "border-transparent text-[#ececec]/60 hover:text-white"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
             }`}
           >
             Manage Resume
           </button>
           <button
             onClick={() => setActiveTab("messages")}
-            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "messages"
-                ? "border-[#ececec] text-white"
-                : "border-transparent text-[#ececec]/60 hover:text-white"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
             }`}
           >
             Inbox Messages
@@ -892,70 +896,70 @@ export default function AdminDashboard() {
 
         {/* PROJECTS TAB */}
         {activeTab === "projects" && (
-          <>
+          <div className="space-y-6">
             {/* Action Bar */}
-            <div className="flex justify-between items-center bg-[#232323] p-6 rounded-2xl border border-white/10">
-              <div className="text-lg font-bold font-ubuntu">
-                Total Projects: <span className="text-white bg-white/10 px-2.5 py-1 rounded-md text-sm ml-1">{projects.length}</span>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 rounded-3xl shadow-xl">
+              <div className="text-base font-medium text-[#ececec]/80">
+                Total Projects: <span className="bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded-lg text-sm font-bold text-white ml-1.5">{projects.length}</span>
               </div>
               <button
                 onClick={handleOpenAdd}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold shadow-lg shadow-[#ececec]/5 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
               >
-                <BsPlusLg className="text-sm" /> Add New Project
+                <BsPlusLg className="text-xs" /> Add New Project
               </button>
             </div>
 
             {/* Projects Listing */}
             {loading ? (
-              <div className="bg-[#232323] p-20 rounded-[2rem] text-center border border-white/10 flex flex-col items-center justify-center space-y-4">
-                <div className="w-12 h-12 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-[#ececec]/60">Fetching your project list...</p>
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-20 rounded-[2rem] text-center shadow-xl flex flex-col items-center justify-center space-y-4">
+                <div className="w-10 h-10 border-2 border-white/40 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-sm text-[#ececec]/60">Fetching project grid system...</p>
               </div>
             ) : projects.length === 0 ? (
-              <div className="bg-[#232323] p-16 rounded-[2rem] text-center border border-white/10 space-y-4">
-                <BsFolderSymlink className="text-5xl mx-auto text-white/30" />
-                <p className="text-[#ececec]/60 text-lg">No projects stored in your database yet.</p>
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-16 rounded-[2rem] text-center shadow-xl space-y-4">
+                <BsFolderSymlink className="text-4xl mx-auto text-white/20" />
+                <p className="text-[#ececec]/60 text-base">No active projects stored in database.</p>
                 <button
                   onClick={handleOpenAdd}
-                  className="px-6 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold cursor-pointer"
+                  className="px-5 py-2.5 bg-white/10 border border-white/5 hover:bg-white/15 rounded-xl transition-all text-sm font-semibold cursor-pointer"
                 >
                   Add First Project
                 </button>
               </div>
             ) : (
-              <div className="bg-[#232323] rounded-[2rem] border border-white/10 shadow-xl overflow-hidden">
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] rounded-[2rem] shadow-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-white/5 border-b border-white/10 text-sm font-bold text-[#ececec]/80">
-                        <th className="px-6 py-4">Image</th>
-                        <th className="px-6 py-4">Title</th>
-                        <th className="px-6 py-4">Category</th>
-                        <th className="px-6 py-4">GitHub Link</th>
-                        <th className="px-6 py-4 text-center">Actions</th>
+                      <tr className="bg-white/[0.02] border-b border-white/[0.06] text-xs font-semibold text-[#ececec]/60 tracking-wider uppercase">
+                        <th className="px-6 py-4.5">Preview</th>
+                        <th className="px-6 py-4.5">Project Title</th>
+                        <th className="px-6 py-4.5">Category</th>
+                        <th className="px-6 py-4.5">Repository</th>
+                        <th className="px-6 py-4.5 text-center">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-white/[0.04]">
                       {projects.map((project) => (
-                        <tr key={project.id} className="hover:bg-white/[0.02] transition-colors">
+                        <tr key={project.id} className="hover:bg-white/[0.01] transition-colors group">
                           <td className="px-6 py-4">
-                            <div className="w-16 h-12 rounded-lg overflow-hidden border border-white/10 bg-black/40">
+                            <div className="w-14 h-10 rounded-lg overflow-hidden border border-white/10 bg-black/40">
                               <img
                                 src={project.image_url || "/assets/img/favicon.png"}
                                 alt={project.title}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).src = "https://placehold.co/100x100/png";
                                 }}
                               />
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-semibold text-white truncate max-w-[200px]">
+                          <td className="px-6 py-4 font-medium text-white truncate max-w-[200px]">
                             {project.title}
                           </td>
-                          <td className="px-6 py-4 text-sm text-[#ececec]">
-                            <span className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-xs">
+                          <td className="px-6 py-4 text-xs">
+                            <span className="px-2.5 py-1 bg-white/[0.04] rounded-md border border-white/5 text-[#ececec]/80">
                               {project.category}
                             </span>
                           </td>
@@ -965,36 +969,36 @@ export default function AdminDashboard() {
                                 href={project.github_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 hover:text-white hover:underline"
+                                className="inline-flex items-center gap-1.5 hover:text-white hover:underline transition-colors text-xs"
                               >
-                                <BsGithub /> Code Repo
+                                <BsGithub className="text-sm" /> Code Repo
                               </a>
                             ) : (
-                              <span className="text-white/30 italic">No repo</span>
+                              <span className="text-white/20 italic text-xs">No repository</span>
                             )}
                           </td>
                           <td className="px-6 py-4">
-                            <div className="flex justify-center items-center gap-3">
+                            <div className="flex justify-center items-center gap-2">
                               <button
                                 onClick={() => router.push(`/admin/view?id=${project.id}`)}
-                                className="p-2.5 bg-white/5 border border-white/10 hover:border-amber-400 text-[#ececec] hover:text-amber-400 rounded-xl transition-all cursor-pointer"
-                                title="Manage Article Content"
+                                className="p-2 bg-white/[0.02] border border-white/10 hover:border-amber-400/50 text-[#ececec]/70 hover:text-amber-400 rounded-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                                title="Manage Contents"
                               >
-                                <BsFileEarmarkText className="text-base" />
+                                <BsFileEarmarkText className="text-sm" />
                               </button>
                               <button
                                 onClick={() => handleOpenEdit(project)}
-                                className="p-2.5 bg-white/5 border border-white/10 hover:border-[#ececec] text-[#ececec] hover:text-white rounded-xl transition-all cursor-pointer"
-                                title="Edit Project"
+                                className="p-2 bg-white/[0.02] border border-white/10 hover:border-white/30 text-[#ececec]/70 hover:text-white rounded-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                                title="Edit Item"
                               >
-                                <BsPencilSquare className="text-base" />
+                                <BsPencilSquare className="text-sm" />
                               </button>
                               <button
                                 onClick={() => handleDelete(project.id, project.title)}
-                                className="p-2.5 bg-red-600/10 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white rounded-xl transition-all cursor-pointer"
-                                title="Delete Project"
+                                className="p-2 bg-red-500/[0.02] border border-red-500/10 hover:border-red-500/40 text-red-400/80 hover:text-red-400 rounded-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                                title="Delete Item"
                               >
-                                <BsTrash className="text-base" />
+                                <BsTrash className="text-sm" />
                               </button>
                             </div>
                           </td>
@@ -1005,137 +1009,125 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
 
         {/* TAB 2: HERO & SOCIALS */}
         {activeTab === "hero" && (
-          <div className="bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold font-ubuntu text-white">Edit Hero & Socials</h2>
-              <p className="text-sm text-[#ececec]/60">Modify the landing page header, introduction text, typewriter animation, and social links.</p>
+          <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 sm:p-8 rounded-[2rem] shadow-xl space-y-8">
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold text-white">Hero & Configuration</h2>
+              <p className="text-xs text-[#ececec]/60">Customize your presentation header, typewriter strings, and primary links.</p>
             </div>
 
             {profileError && (
-              <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-xl text-center">
-                {profileError}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-xl text-center">{profileError}</div>
             )}
-
             {profileSuccess && (
-              <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-xl text-center">
-                {profileSuccess}
-              </div>
+              <div className="text-xs text-green-400 bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-xl text-center">{profileSuccess}</div>
             )}
 
             <form onSubmit={handleSaveProfile} className="space-y-6">
-              {/* HERO SECTION SETTINGS */}
-              <div className="space-y-6">
-                <h3 className="text-lg font-bold font-ubuntu text-white">Hero Section Settings</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">Hero Title</label>
+              <div className="space-y-5">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#ececec]/40 border-b border-white/5 pb-2">Hero Copywriting</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Greeting Title</label>
                     <input
                       type="text"
                       value={profileForm.hero_title}
                       onChange={(e) => setProfileForm({ ...profileForm, hero_title: e.target.value })}
-                      placeholder="e.g. Hellow !!"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="e.g. Hello World"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">Hero Name</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Display Name</label>
                     <input
                       type="text"
                       value={profileForm.hero_name}
                       onChange={(e) => setProfileForm({ ...profileForm, hero_name: e.target.value })}
-                      placeholder="e.g. Ernanda"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="e.g. John Doe"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Typewriter Words (separated by comma)</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Typewriter Words (separated by comma)</label>
                   <input
                     type="text"
                     value={profileForm.typewriter_words_str}
                     onChange={(e) => setProfileForm({ ...profileForm, typewriter_words_str: e.target.value })}
-                    placeholder="e.g. Web Developer, UI/UX Enthusiast, Information Systems Student"
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                    placeholder="e.g. Software Engineer, UI Designer, Analyst"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                     required
-                  />
-                  <p className="text-[11px] text-[#ececec]/40 pl-1">Input words or short sentences separated by commas for the text animation effect.</p>
+                    />
+                  <p className="text-[11px] text-[#ececec]/40 pl-0.5">Provide tags comma-separated to render continuous animation lines on header script.</p>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Hero Description</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Subheading Narrative</label>
                   <textarea
                     value={profileForm.hero_description}
                     onChange={(e) => setProfileForm({ ...profileForm, hero_description: e.target.value })}
-                    placeholder="Tell something about yourself..."
+                    placeholder="Brief intro narrative summary..."
                     rows={4}
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors resize-none"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
                     required
                   ></textarea>
                 </div>
               </div>
 
               {/* SOCIAL LINKS SETTINGS */}
-              <div className="border-t border-white/10 pt-6">
-                <h3 className="text-lg font-bold font-ubuntu text-white mb-4">Social Media Links</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1 flex items-center gap-1.5">
-                      <BsGithub className="text-sm" /> GitHub Link
-                    </label>
+              <div className="space-y-5 border-t border-white/5 pt-6">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#ececec]/40 border-b border-white/5 pb-2">Social Network Channels</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5 flex items-center gap-1.5"><BsGithub /> GitHub Profile</label>
                     <input
                       type="text"
                       value={profileForm.github_url}
                       onChange={(e) => setProfileForm({ ...profileForm, github_url: e.target.value })}
-                      placeholder="e.g. https://github.com/yourusername"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="https://github.com/..."
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1 flex items-center gap-1.5">
-                      <BsLinkedin className="text-sm" /> LinkedIn Link
-                    </label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5 flex items-center gap-1.5"><BsLinkedin /> LinkedIn Network</label>
                     <input
                       type="text"
                       value={profileForm.linkedin_url}
                       onChange={(e) => setProfileForm({ ...profileForm, linkedin_url: e.target.value })}
-                      placeholder="e.g. https://linkedin.com/in/yourusername"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="https://linkedin.com/in/..."
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1 flex items-center gap-1.5">
-                      <BsInstagram className="text-sm" /> Instagram Link
-                    </label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5 flex items-center gap-1.5"><BsInstagram /> Instagram Handle</label>
                     <input
                       type="text"
                       value={profileForm.instagram_url}
                       onChange={(e) => setProfileForm({ ...profileForm, instagram_url: e.target.value })}
-                      placeholder="e.g. https://instagram.com/yourusername"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="https://instagram.com/..."
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-white/10">
+              <div className="flex justify-end pt-4 border-t border-white/5">
                 <button
                   type="submit"
                   disabled={savingProfile}
-                  className="px-8 py-3 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold disabled:opacity-50 shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                  className="px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-white/5 cursor-pointer"
                 >
-                  {savingProfile ? "Saving Profile..." : "Save Profile"}
+                  {savingProfile ? "Processing Records..." : "Save Configuration"}
                 </button>
               </div>
             </form>
@@ -1144,30 +1136,25 @@ export default function AdminDashboard() {
 
         {/* TAB 3: ABOUT PROFILE */}
         {activeTab === "about" && (
-          <div className="bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold font-ubuntu text-white">Edit About Profile</h2>
-              <p className="text-sm text-[#ececec]/60">Modify your bio, upload avatar pictures, information details, and customize your professional background.</p>
+          <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 sm:p-8 rounded-[2rem] shadow-xl space-y-8">
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold text-white">About Matrix Profile</h2>
+              <p className="text-xs text-[#ececec]/60">Modify biographic details, manage storage assets avatar representations, and localization variables.</p>
             </div>
 
             {profileError && (
-              <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-xl text-center">
-                {profileError}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-xl text-center">{profileError}</div>
             )}
-
             {profileSuccess && (
-              <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-xl text-center">
-                {profileSuccess}
-              </div>
+              <div className="text-xs text-green-400 bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-xl text-center">{profileSuccess}</div>
             )}
 
             <form onSubmit={handleSaveProfile} className="space-y-6">
               <div className="space-y-6">
                 
                 {/* Profile Photo Upload */}
-                <div className="flex flex-col md:flex-row items-center gap-6 bg-[#1f1f1f] p-6 rounded-2xl border border-white/5">
-                  <div className="w-[120px] h-[120px] rounded-full overflow-hidden border-2 border-white/20 bg-black/40 flex-shrink-0 relative">
+                <div className="flex flex-col sm:flex-row items-center gap-6 bg-white/[0.01] border border-white/5 p-5 rounded-2xl">
+                  <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/10 bg-black/40 flex-shrink-0 relative shadow-inner">
                     {profileForm.about_image_url ? (
                       <img
                         src={profileForm.about_image_url}
@@ -1175,142 +1162,135 @@ export default function AdminDashboard() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-white/40">No Image</div>
+                      <div className="w-full h-full flex items-center justify-center text-[10px] text-white/20">Empty Matrix</div>
                     )}
                   </div>
-                  <div className="space-y-3 flex-1 w-full">
-                    <label className="block text-xs font-bold text-[#ececec]/80">Upload Profile Photo</label>
+                  <div className="space-y-2 flex-1 w-full">
+                    <label className="block text-xs font-semibold text-[#ececec]/70">Profile Avatar Asset</label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
                       disabled={uploadingImage}
-                      className="block w-full text-sm text-[#ececec]/60 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer"
+                      className="block w-full text-xs text-[#ececec]/40 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer transition-all duration-300"
                     />
-                    <p className="text-[11px] text-[#ececec]/40">Upload image directly to the 'portfolio' storage bucket. Supported formats: JPG, PNG, WEBP.</p>
-                    {uploadingImage && <p className="text-xs text-yellow-400">Uploading photo...</p>}
+                    {uploadingImage && <p className="text-xs text-yellow-400 animate-pulse">Uploading file asset into bucket store...</p>}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">About Name</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Biographic Fullname</label>
                     <input
                       type="text"
                       value={profileForm.about_name}
                       onChange={(e) => setProfileForm({ ...profileForm, about_name: e.target.value })}
-                      placeholder="e.g. Ernanda Revalino"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="Fullname..."
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">About Title</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Professional Role Title</label>
                     <input
                       type="text"
                       value={profileForm.about_title}
                       onChange={(e) => setProfileForm({ ...profileForm, about_title: e.target.value })}
-                      placeholder="e.g. Web Development & Data Analyst Aspiring"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      placeholder="e.g. Lead Systems Engineer"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">About Email</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Communication Email</label>
                     <input
                       type="email"
                       value={profileForm.about_email}
                       onChange={(e) => setProfileForm({ ...profileForm, about_email: e.target.value })}
-                      placeholder="e.g. ernandarevalino@gmail.com"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">About Phone</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Contact Line Phone</label>
                     <input
                       type="text"
                       value={profileForm.about_phone}
                       onChange={(e) => setProfileForm({ ...profileForm, about_phone: e.target.value })}
-                      placeholder="e.g. +62 857-1020-9622"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">About Location</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Localization Location</label>
                     <input
                       type="text"
                       value={profileForm.about_location}
                       onChange={(e) => setProfileForm({ ...profileForm, about_location: e.target.value })}
-                      placeholder="e.g. Serpong, Tangerang Selatan"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Google Maps URL</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Google Maps URL String</label>
                   <input
                     type="url"
                     value={profileForm.about_maps_url}
                     onChange={(e) => setProfileForm({ ...profileForm, about_maps_url: e.target.value })}
-                    placeholder="e.g. https://maps.app.goo.gl/uHZRvx4thS6Nh1PC7"
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                    placeholder="https://maps.google.com/..."
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">About Heading</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Section Punchline Heading</label>
                   <input
                     type="text"
                     value={profileForm.about_heading}
                     onChange={(e) => setProfileForm({ ...profileForm, about_heading: e.target.value })}
-                    placeholder="e.g. Writing code with purpose, turning data into direction"
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                     required
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Bio Paragraph 1</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 1</label>
                   <textarea
                     value={profileForm.about_bio_1}
                     onChange={(e) => setProfileForm({ ...profileForm, about_bio_1: e.target.value })}
-                    placeholder="Describe your first biography paragraph..."
                     rows={4}
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors resize-none"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
                     required
                   ></textarea>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Bio Paragraph 2</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 2</label>
                   <textarea
                     value={profileForm.about_bio_2}
                     onChange={(e) => setProfileForm({ ...profileForm, about_bio_2: e.target.value })}
-                    placeholder="Describe your second biography paragraph..."
                     rows={4}
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors resize-none"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
                     required
                   ></textarea>
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-white/10">
+              <div className="flex justify-end pt-4 border-t border-white/5">
                 <button
                   type="submit"
                   disabled={savingProfile}
-                  className="px-8 py-3 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold disabled:opacity-50 shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                  className="px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-white/5 cursor-pointer"
                 >
-                  {savingProfile ? "Saving Profile..." : "Save Profile"}
+                  {savingProfile ? "Processing Changes..." : "Save Bio Dataset"}
                 </button>
               </div>
             </form>
@@ -1319,87 +1299,83 @@ export default function AdminDashboard() {
 
         {/* TAB 4: MANAGE SKILLS */}
         {activeTab === "skills" && (
-          <>
+          <div className="space-y-6">
             {/* Action Bar */}
-            <div className="flex justify-between items-center bg-[#232323] p-6 rounded-2xl border border-white/10">
-              <div className="text-lg font-bold font-ubuntu">
-                Total Skills: <span className="text-white bg-white/10 px-2.5 py-1 rounded-md text-sm ml-1">{skills.length}</span>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 rounded-3xl shadow-xl">
+              <div className="text-base font-medium text-[#ececec]/80">
+                Total Skills Stack: <span className="bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded-lg text-sm font-bold text-white ml-1.5">{skills.length}</span>
               </div>
               <button
                 onClick={handleOpenAddSkill}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold shadow-lg shadow-[#ececec]/5 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
               >
-                <BsPlusLg className="text-sm" /> Add New Skill
+                <BsPlusLg className="text-xs" /> Add New Skill Descriptor
               </button>
             </div>
 
             {/* Skills Listing */}
             {skillsLoading ? (
-              <div className="bg-[#232323] p-20 rounded-[2rem] text-center border border-white/10 flex flex-col items-center justify-center space-y-4">
-                <div className="w-12 h-12 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-[#ececec]/60">Fetching your skills list...</p>
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-20 rounded-[2rem] text-center shadow-xl flex flex-col items-center justify-center space-y-4">
+                <div className="w-10 h-10 border-2 border-white/40 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-sm text-[#ececec]/60">Fetching framework metric stacks...</p>
               </div>
             ) : skills.length === 0 ? (
-              <div className="bg-[#232323] p-16 rounded-[2rem] text-center border border-white/10 space-y-4">
-                <BsFolderSymlink className="text-5xl mx-auto text-white/30" />
-                <p className="text-[#ececec]/60 text-lg">No skills stored in your database yet.</p>
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-16 rounded-[2rem] text-center shadow-xl space-y-4">
+                <BsFolderSymlink className="text-4xl mx-auto text-white/20" />
+                <p className="text-[#ececec]/60 text-base">No functional metrics initialized.</p>
                 <button
                   onClick={handleOpenAddSkill}
-                  className="px-6 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold cursor-pointer"
+                  className="px-5 py-2.5 bg-white/10 border border-white/5 hover:bg-white/15 rounded-xl transition-all text-sm font-semibold cursor-pointer"
                 >
-                  Add First Skill
+                  Create Metric Descriptor
                 </button>
               </div>
             ) : (
-              <div className="bg-[#232323] rounded-[2rem] border border-white/10 shadow-xl overflow-hidden">
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] rounded-[2rem] shadow-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-white/5 border-b border-white/10 text-sm font-bold text-[#ececec]/80">
-                        <th className="px-6 py-4">Skill Name</th>
-                        <th className="px-6 py-4">Category</th>
-                        <th className="px-6 py-4">Percentage</th>
-                        <th className="px-6 py-4">Tooltip / Description</th>
-                        <th className="px-6 py-4 text-center">Actions</th>
+                      <tr className="bg-white/[0.02] border-b border-white/[0.06] text-xs font-semibold text-[#ececec]/60 tracking-wider uppercase">
+                        <th className="px-6 py-4.5">Skill Identity</th>
+                        <th className="px-6 py-4.5">Classification Tag</th>
+                        <th className="px-6 py-4.5">Performance Range</th>
+                        <th className="px-6 py-4.5">Tooltip Metadata</th>
+                        <th className="px-6 py-4.5 text-center">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-white/[0.04]">
                       {skills.map((skill) => (
-                        <tr key={skill.id} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="px-6 py-4 font-semibold text-white">
-                            {skill.name}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-[#ececec]">
-                            <span className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-xs">
+                        <tr key={skill.id} className="hover:bg-white/[0.01] transition-colors">
+                          <td className="px-6 py-4 font-semibold text-white">{skill.name}</td>
+                          <td className="px-6 py-4 text-xs">
+                            <span className="px-2.5 py-1 bg-white/[0.04] rounded-md border border-white/5 text-[#ececec]/80">
                               {skill.category}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-white font-medium">
+                          <td className="px-6 py-4 text-xs font-medium text-white">
                             <div className="flex items-center gap-3">
-                              <span className="w-10">{skill.percentage}%</span>
-                              <div className="w-24 h-[6px] bg-white/10 rounded-full overflow-hidden hidden sm:block">
-                                <div className="h-full bg-gradient-to-r from-white/40 to-[#ececec] rounded-full" style={{ width: `${skill.percentage}%` }}></div>
+                              <span className="w-8 tracking-tighter">{skill.percentage}%</span>
+                              <div className="w-20 h-[5px] bg-white/5 border border-white/[0.02] rounded-full overflow-hidden hidden sm:block">
+                                <div className="h-full bg-gradient-to-r from-white/20 to-[#ececec] rounded-full transition-all duration-500" style={{ width: `${skill.percentage}%` }}></div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-[#ececec]/60 max-w-xs truncate" title={skill.tooltip}>
-                            {skill.tooltip || <span className="text-white/30 italic">No description</span>}
+                          <td className="px-6 py-4 text-xs text-[#ececec]/50 max-w-xs truncate" title={skill.tooltip}>
+                            {skill.tooltip || <span className="text-white/20 italic">No description</span>}
                           </td>
                           <td className="px-6 py-4">
-                            <div className="flex justify-center items-center gap-3">
+                            <div className="flex justify-center items-center gap-2">
                               <button
                                 onClick={() => handleOpenEditSkill(skill)}
-                                className="p-2.5 bg-white/5 border border-white/10 hover:border-[#ececec] text-[#ececec] hover:text-white rounded-xl transition-all cursor-pointer"
-                                title="Edit Skill"
+                                className="p-2 bg-white/[0.02] border border-white/10 hover:border-white/30 text-[#ececec]/70 hover:text-white rounded-xl transition-all duration-300 cursor-pointer"
                               >
-                                <BsPencilSquare className="text-base" />
+                                <BsPencilSquare className="text-xs" />
                               </button>
                               <button
                                 onClick={() => handleDeleteSkill(skill.id, skill.name)}
-                                className="p-2.5 bg-red-600/10 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white rounded-xl transition-all cursor-pointer"
-                                title="Delete Skill"
+                                className="p-2 bg-red-500/[0.02] border border-red-500/10 hover:border-red-500/40 text-red-400/80 hover:text-red-400 rounded-xl transition-all duration-300 cursor-pointer"
                               >
-                                <BsTrash className="text-base" />
+                                <BsTrash className="text-xs" />
                               </button>
                             </div>
                           </td>
@@ -1410,35 +1386,30 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
 
         {/* RESUME TAB */}
         {activeTab === "resume" && (
           <div className="space-y-8">
             {/* Resume Profile Form */}
-            <div className="bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold font-ubuntu text-white">Edit Resume Profile</h2>
-                <p className="text-sm text-[#ececec]/60">Customize the summary statement, contact info, and Profile Image/GIF for your resume.</p>
+            <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 sm:p-8 rounded-[2rem] shadow-xl space-y-6">
+              <div className="space-y-1">
+                <h2 className="text-xl font-bold text-white">Resume Structural Info</h2>
+                <p className="text-xs text-[#ececec]/60">Customize secondary summary statements, localization records, and direct curriculum parameters.</p>
               </div>
 
               {resumeError && (
-                <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-xl text-center">
-                  {resumeError}
-                </div>
+                <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-3 px-4 rounded-xl text-center">{resumeError}</div>
               )}
-
               {resumeSuccess && (
-                <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-xl text-center">
-                  {resumeSuccess}
-                </div>
+                <div className="text-xs text-green-400 bg-green-500/10 border border-green-500/20 py-3 px-4 rounded-xl text-center">{resumeSuccess}</div>
               )}
 
               <form onSubmit={handleSaveResumeProfile} className="space-y-6">
                 {/* Image Upload */}
-                <div className="flex flex-col md:flex-row items-center gap-6 bg-[#1f1f1f] p-6 rounded-2xl border border-white/5">
-                  <div className="w-[120px] h-[120px] rounded-full overflow-hidden border-2 border-white/20 bg-black/40 flex-shrink-0 relative">
+                <div className="flex flex-col sm:flex-row items-center gap-6 bg-white/[0.01] border border-white/5 p-5 rounded-2xl">
+                  <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/10 bg-black/40 flex-shrink-0 relative shadow-inner">
                     {resumeProfile.image_url ? (
                       <img
                         src={resumeProfile.image_url}
@@ -1446,135 +1417,132 @@ export default function AdminDashboard() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-white/40">No Image</div>
+                      <div className="w-full h-full flex items-center justify-center text-[10px] text-white/20">No Image Asset</div>
                     )}
                   </div>
-                  <div className="space-y-3 flex-1 w-full">
-                    <label className="block text-xs font-bold text-[#ececec]/80">Upload Resume Profile Image / GIF</label>
+                  <div className="space-y-2 flex-1 w-full">
+                    <label className="block text-xs font-semibold text-[#ececec]/70">Curriculum Meta Avatar / Animated Canvas</label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={handleResumeImgUpload}
                       disabled={uploadingResumeImg}
-                      className="block w-full text-sm text-[#ececec]/60 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer"
+                      className="block w-full text-xs text-[#ececec]/40 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer transition-all duration-300"
                     />
-                    {uploadingResumeImg && <p className="text-xs text-yellow-400">Uploading resume image...</p>}
+                    {uploadingResumeImg && <p className="text-xs text-yellow-400 animate-pulse">Streaming file package into server storage...</p>}
                   </div>
                 </div>
 
                 {/* Summary */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Summary</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Resume Summary Paragraph</label>
                   <textarea
                     value={resumeProfile.summary}
                     onChange={(e) => setResumeProfile({ ...resumeProfile, summary: e.target.value })}
-                    placeholder="Turn hope into ideas..."
+                    placeholder="Brief resume objective synthesis statement..."
                     rows={3}
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors resize-none"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
                     required
                   ></textarea>
                 </div>
 
                 {/* Contacts grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">Location</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Regional Location</label>
                     <input
                       type="text"
                       value={resumeProfile.location}
                       onChange={(e) => setResumeProfile({ ...resumeProfile, location: e.target.value })}
-                      placeholder="Serpong, Tangerang Selatan"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">Email</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Mailing Endpoint</label>
                     <input
                       type="email"
                       value={resumeProfile.email}
                       onChange={(e) => setResumeProfile({ ...resumeProfile, email: e.target.value })}
-                      placeholder="ernandarevalino@gmail.com"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-[#ececec]/80 pl-1">Phone</label>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Phone System Digits</label>
                     <input
                       type="text"
                       value={resumeProfile.phone}
                       onChange={(e) => setResumeProfile({ ...resumeProfile, phone: e.target.value })}
-                      placeholder="+62 857-1020-9622"
-                      className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-4 border-t border-white/10">
+                <div className="flex justify-end pt-4 border-t border-white/5">
                   <button
                     type="submit"
                     disabled={savingResumeProfile}
-                    className="px-8 py-3 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-sm font-bold disabled:opacity-50 shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                    className="px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-white/5 cursor-pointer"
                   >
-                    {savingResumeProfile ? "Saving Resume Profile..." : "Save Resume Profile"}
+                    {savingResumeProfile ? "Syncing Workspace..." : "Commit Structure Profile"}
                   </button>
                 </div>
               </form>
             </div>
 
             {/* Resume Technical Skills CRUD */}
-            <div className="bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-bold font-ubuntu text-white">Resume Technical Skills</h2>
-                  <p className="text-sm text-[#ececec]/60">Manage technical skills displayed in your resume sidebar.</p>
+            <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 sm:p-8 rounded-[2rem] shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="space-y-0.5">
+                  <h2 className="text-lg font-bold text-white">Technical Sidebar Matrix</h2>
+                  <p className="text-xs text-[#ececec]/60">Manage direct technical performance ratios visible explicitly in sidebar configurations.</p>
                 </div>
                 <button
                   onClick={handleOpenAddResumeSkill}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-xs font-bold shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-xs font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
                 >
-                  <BsPlusLg className="text-xs" /> Add Resume Skill
+                  <BsPlusLg className="text-[10px]" /> Add Resume Metric
                 </button>
               </div>
 
               {resumeLoading ? (
-                <div className="text-center py-10">
-                  <div className="w-8 h-8 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <div className="text-center py-6">
+                  <div className="w-6 h-6 border-2 border-white/30 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 </div>
               ) : resumeSkills.length === 0 ? (
-                <p className="text-[#ececec]/60 text-center py-6 text-sm italic">No technical skills added yet.</p>
+                <p className="text-xs text-[#ececec]/40 text-center py-4 italic">No sidebar credentials available.</p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-white/5">
+                <div className="overflow-x-auto rounded-xl border border-white/5 bg-white/[0.01]">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-white/5 text-xs font-bold text-[#ececec]/80 border-b border-white/10">
-                        <th className="px-6 py-3">Skill Name</th>
-                        <th className="px-6 py-3">Percentage</th>
+                      <tr className="bg-white/[0.02] border-b border-white/5 text-xs font-semibold text-[#ececec]/50">
+                        <th className="px-6 py-3">Metric Signature</th>
+                        <th className="px-6 py-3">Scale Dimension</th>
                         <th className="px-6 py-3 text-center">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 text-sm">
+                    <tbody className="divide-y divide-white/[0.04] text-xs">
                       {resumeSkills.map((sk) => (
                         <tr key={sk.id} className="hover:bg-white/[0.01]">
                           <td className="px-6 py-3 font-semibold text-white">{sk.name}</td>
-                          <td className="px-6 py-3 text-white">{sk.percentage}%</td>
+                          <td className="px-6 py-3 text-[#ececec]/80 font-medium">{sk.percentage}%</td>
                           <td className="px-6 py-3">
-                            <div className="flex justify-center items-center gap-2">
+                            <div className="flex justify-center items-center gap-1.5">
                               <button
                                 onClick={() => handleOpenEditResumeSkill(sk)}
-                                className="p-2 bg-white/5 border border-white/10 hover:border-[#ececec] text-[#ececec] hover:text-white rounded-lg transition-all cursor-pointer"
+                                className="p-2 bg-white/[0.02] border border-white/10 hover:border-white/30 text-[#ececec]/70 hover:text-white rounded-lg transition-all cursor-pointer"
                               >
-                                <BsPencilSquare className="text-xs" />
+                                <BsPencilSquare className="text-[11px]" />
                               </button>
                               <button
                                 onClick={() => handleDeleteResumeSkill(sk.id, sk.name)}
-                                className="p-2 bg-red-600/10 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white rounded-lg transition-all cursor-pointer"
+                                className="p-2 bg-red-500/[0.02] border border-red-500/10 hover:border-red-500/40 text-red-400/80 hover:text-red-400 rounded-lg transition-all cursor-pointer"
                               >
-                                <BsTrash className="text-xs" />
+                                <BsTrash className="text-[11px]" />
                               </button>
                             </div>
                           </td>
@@ -1587,68 +1555,68 @@ export default function AdminDashboard() {
             </div>
 
             {/* Resume Timeline Items CRUD */}
-            <div className="bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-bold font-ubuntu text-white">Resume Timeline Items</h2>
-                  <p className="text-sm text-[#ececec]/60">Manage your Education, Experience, and Certifications.</p>
+            <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 sm:p-8 rounded-[2rem] shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="space-y-0.5">
+                  <h2 className="text-lg font-bold text-white">Chronological Milestones</h2>
+                  <p className="text-xs text-[#ececec]/60">Manage educational histories, corporate experiences, and credential pathways.</p>
                 </div>
                 <button
                   onClick={handleOpenAddResumeItem}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-xs font-bold shadow-lg shadow-[#ececec]/10 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-xs font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
                 >
-                  <BsPlusLg className="text-xs" /> Add Timeline Item
+                  <BsPlusLg className="text-[10px]" /> Append Milestone Block
                 </button>
               </div>
 
               {resumeLoading ? (
-                <div className="text-center py-10">
-                  <div className="w-8 h-8 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <div className="text-center py-6">
+                  <div className="w-6 h-6 border-2 border-white/30 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 </div>
               ) : resumeItems.length === 0 ? (
-                <p className="text-[#ececec]/60 text-center py-6 text-sm italic">No timeline items added yet.</p>
+                <p className="text-xs text-[#ececec]/40 text-center py-4 italic">No timeline arrays configured.</p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-white/5">
+                <div className="overflow-x-auto rounded-xl border border-white/5 bg-white/[0.01]">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-white/5 text-xs font-bold text-[#ececec]/80 border-b border-white/10">
-                        <th className="px-6 py-3">Type</th>
-                        <th className="px-6 py-3">Title</th>
-                        <th className="px-6 py-3">Subtitle / Instansi</th>
-                        <th className="px-6 py-3">Period</th>
-                        <th className="px-6 py-3">Order</th>
+                      <tr className="bg-white/[0.02] border-b border-white/5 text-xs font-semibold text-[#ececec]/50">
+                        <th className="px-6 py-3">Context Classification</th>
+                        <th className="px-6 py-3">Block Title</th>
+                        <th className="px-6 py-3">Host Entity / Instansi</th>
+                        <th className="px-6 py-3">Time Period</th>
+                        <th className="px-6 py-3">Order Index</th>
                         <th className="px-6 py-3 text-center">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 text-sm">
+                    <tbody className="divide-y divide-white/[0.04] text-xs">
                       {resumeItems.map((item) => (
                         <tr key={item.id} className="hover:bg-white/[0.01]">
                           <td className="px-6 py-3">
-                            <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-xs capitalize text-[#ececec]">
+                            <span className="px-2 py-0.5 bg-white/[0.04] border border-white/5 rounded text-[10px] uppercase font-medium text-[#ececec]/80">
                               {item.type}
                             </span>
                           </td>
                           <td className="px-6 py-3 font-semibold text-white truncate max-w-[150px]" title={item.title}>
                             {item.title}
                           </td>
-                          <td className="px-6 py-3 text-[#ececec]/80 truncate max-w-[150px]" title={item.subtitle}>
-                            {item.subtitle || <span className="text-white/20 italic">-</span>}
+                          <td className="px-6 py-3 text-[#ececec]/70 truncate max-w-[150px]" title={item.subtitle}>
+                            {item.subtitle || <span className="text-white/10 italic">-</span>}
                           </td>
-                          <td className="px-6 py-3 text-[#ececec]/60">{item.period || <span className="text-white/20 italic">-</span>}</td>
-                          <td className="px-6 py-3 text-[#ececec]/60">{item.order_index}</td>
+                          <td className="px-6 py-3 text-[#ececec]/60">{item.period || <span className="text-white/10 italic">-</span>}</td>
+                          <td className="px-6 py-3 text-white/50">{item.order_index}</td>
                           <td className="px-6 py-3">
-                            <div className="flex justify-center items-center gap-2">
+                            <div className="flex justify-center items-center gap-1.5">
                               <button
                                 onClick={() => handleOpenEditResumeItem(item)}
-                                className="p-2 bg-white/5 border border-white/10 hover:border-[#ececec] text-[#ececec] hover:text-white rounded-lg transition-all cursor-pointer"
+                                className="p-2 bg-white/[0.02] border border-white/10 hover:border-white/30 text-[#ececec]/70 hover:text-white rounded-lg transition-all cursor-pointer"
                               >
-                                <BsPencilSquare className="text-xs" />
+                                <BsPencilSquare className="text-[11px]" />
                               </button>
                               <button
                                 onClick={() => handleDeleteResumeItem(item.id, item.title)}
-                                className="p-2 bg-red-600/10 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white rounded-lg transition-all cursor-pointer"
+                                className="p-2 bg-red-500/[0.02] border border-red-500/10 hover:border-red-500/40 text-red-400/80 hover:text-red-400 rounded-lg transition-all cursor-pointer"
                               >
-                                <BsTrash className="text-xs" />
+                                <BsTrash className="text-[11px]" />
                               </button>
                             </div>
                           </td>
@@ -1665,51 +1633,49 @@ export default function AdminDashboard() {
         {/* MESSAGES / INBOX TAB */}
         {activeTab === "messages" && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-[#232323] p-6 rounded-2xl border border-white/10">
-              <div className="text-lg font-bold font-ubuntu">
-                Total Messages: <span className="text-white bg-white/10 px-2.5 py-1 rounded-md text-sm ml-1">{contacts.length}</span>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 rounded-3xl shadow-xl">
+              <div className="text-base font-medium text-[#ececec]/80">
+                Inbox Feed Transactions: <span className="bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded-lg text-sm font-bold text-white ml-1.5">{contacts.length}</span>
               </div>
               <button
                 onClick={fetchContacts}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-sm font-semibold cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl hover:bg-white/[0.08] transition-all text-xs font-semibold cursor-pointer w-full sm:w-auto"
               >
-                Refresh
+                Refresh Data Feed
               </button>
             </div>
 
             {contactsLoading ? (
-              <div className="bg-[#232323] p-20 rounded-[2rem] text-center border border-white/10 flex flex-col items-center justify-center space-y-4">
-                <div className="w-12 h-12 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-[#ececec]/60">Fetching messages...</p>
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-20 rounded-[2rem] text-center shadow-xl flex flex-col items-center justify-center space-y-4">
+                <div className="w-10 h-10 border-2 border-white/40 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-sm text-[#ececec]/60">Streaming encrypted transmission vectors...</p>
               </div>
             ) : contactsError ? (
-              <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 py-4 px-6 rounded-xl text-center">
-                {contactsError}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-4 px-6 rounded-xl text-center">{contactsError}</div>
             ) : contacts.length === 0 ? (
-              <div className="bg-[#232323] p-16 rounded-[2rem] text-center border border-white/10 space-y-4">
-                <BsEnvelope className="text-5xl mx-auto text-white/30" />
-                <p className="text-[#ececec]/60 text-lg">No incoming messages yet.</p>
+              <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-16 rounded-[2rem] text-center shadow-xl space-y-4">
+                <BsEnvelope className="text-4xl mx-auto text-white/10" />
+                <p className="text-[#ececec]/40 text-sm">Communication channel queue clear.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {contacts.map((contact) => (
                   <div
                     key={contact.id}
-                    className="bg-[#232323] p-6 rounded-2xl border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-4 relative group"
+                    className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] p-6 rounded-2xl border border-white/[0.06] hover:border-white/20 transition-all duration-300 flex flex-col justify-between space-y-4 shadow-xl"
                   >
-                    <div className="space-y-3">
+                    <div className="space-y-3.5">
                       <div className="flex justify-between items-start gap-4">
-                        <div>
-                          <h3 className="text-lg font-bold text-white font-ubuntu">{contact.name}</h3>
+                        <div className="space-y-0.5">
+                          <h3 className="text-base font-bold text-white font-ubuntu">{contact.name}</h3>
                           <a
                             href={`mailto:${contact.email}`}
-                            className="text-xs text-[#ececec]/60 hover:text-white hover:underline transition-colors break-all"
+                            className="text-xs text-[#ececec]/50 hover:text-white hover:underline transition-colors break-all"
                           >
                             {contact.email}
                           </a>
                         </div>
-                        <span className="text-[11px] text-white/40 whitespace-nowrap bg-white/5 px-2.5 py-1 rounded border border-white/5">
+                        <span className="text-[10px] font-medium text-white/40 tracking-tight whitespace-nowrap bg-white/[0.03] px-2.5 py-1 rounded border border-white/5">
                           {new Date(contact.created_at).toLocaleDateString("id-ID", {
                             day: "numeric",
                             month: "short",
@@ -1720,23 +1686,22 @@ export default function AdminDashboard() {
                         </span>
                       </div>
 
-                      <div className="border-t border-white/5 pt-3">
-                        <div className="text-xs font-bold text-[#ececec]/80 uppercase tracking-wider mb-1">
-                          Subject: <span className="text-[#ececec] normal-case tracking-normal">{contact.subject}</span>
+                      <div className="border-t border-white/5 pt-3.5 space-y-1.5">
+                        <div className="text-[11px] font-bold text-[#ececec]/40 uppercase tracking-widest">
+                          Subject Context: <span className="text-[#ececec]/90 normal-case tracking-normal ml-1 font-medium">{contact.subject}</span>
                         </div>
-                        <p className="text-sm text-[#ececec]/85 leading-relaxed bg-black/20 p-4 rounded-xl border border-white/5 whitespace-pre-wrap break-words mt-2">
+                        <p className="text-xs text-[#ececec]/80 leading-relaxed bg-black/20 p-4 rounded-xl border border-white/5 whitespace-pre-wrap break-words mt-2 font-mono">
                           {contact.message}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex justify-end pt-2">
+                    <div className="flex justify-end pt-2 border-t border-white/[0.03]">
                       <button
                         onClick={() => handleDeleteContact(contact.id, contact.name)}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-600/10 border border-red-500/20 hover:bg-red-600 hover:border-red-500 text-red-400 hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer"
-                        title="Delete Message"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-red-500/[0.02] border border-red-500/10 hover:bg-red-500 hover:border-red-500 text-red-400 hover:text-white rounded-xl text-[11px] font-bold transition-all cursor-pointer"
                       >
-                        <BsTrash className="text-xs" /> Delete Message
+                        <BsTrash className="text-xs" /> Discard Transmission
                       </button>
                     </div>
                   </div>
@@ -1750,62 +1715,61 @@ export default function AdminDashboard() {
 
       {/* Resume Skill Modal */}
       {isResumeSkillModalOpen && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[9999] flex justify-center items-center p-4">
-          <div className="bg-[#232323] border border-white/10 w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative space-y-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex justify-center items-center p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-8 shadow-2xl relative space-y-6">
             <div>
-              <h3 className="text-2xl font-bold font-ubuntu text-white">
-                {editingResumeSkill ? "Edit Resume Skill" : "Add Resume Skill"}
+              <h3 className="text-xl font-bold text-white">
+                {editingResumeSkill ? "Modify Technical Skill" : "Initialize Technical Skill"}
               </h3>
-              <p className="text-xs text-[#ececec]/60 mt-1">
-                Manage the technical mini-skills for your resume sidebar.
-              </p>
+              <p className="text-xs text-[#ececec]/60 mt-1">Configure individual performance thresholds for metrics layout.</p>
             </div>
 
             {resumeSkillError && (
-              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">
-                {resumeSkillError}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">{resumeSkillError}</div>
             )}
 
-            <form onSubmit={handleSaveResumeSkill} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Skill Name</label>
+            <form onSubmit={handleSaveResumeSkill} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Skill Label</label>
                 <input
                   type="text"
                   value={resumeSkillFormData.name}
                   onChange={(e) => setResumeSkillFormData({ ...resumeSkillFormData, name: e.target.value })}
-                  placeholder="e.g. Web Development"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors"
+                  placeholder="e.g. Next.js Runtime"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none transition-colors"
                   required
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Percentage ({resumeSkillFormData.percentage}%)</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5 flex justify-between">
+                  <span>Performance Magnitude</span>
+                  <span className="text-white font-mono">{resumeSkillFormData.percentage}%</span>
+                </label>
                 <input
                   type="range"
                   min="0"
                   max="100"
                   value={resumeSkillFormData.percentage}
                   onChange={(e) => setResumeSkillFormData({ ...resumeSkillFormData, percentage: Number(e.target.value) })}
-                  className="w-full accent-[#ececec] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-white bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+              <div className="flex gap-2.5 justify-end pt-4 border-t border-white/5">
                 <button
                   type="button"
                   onClick={() => setIsResumeSkillModalOpen(false)}
-                  className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl hover:bg-white/[0.08] transition-all text-xs font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingResumeSkill}
-                  className="px-6 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
                 >
-                  {savingResumeSkill ? "Saving..." : "Save Skill"}
+                  {savingResumeSkill ? "Processing..." : "Commit Metric"}
                 </button>
               </div>
             </form>
@@ -1815,31 +1779,27 @@ export default function AdminDashboard() {
 
       {/* Resume Item Modal */}
       {isResumeItemModalOpen && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[9999] flex justify-center items-center p-4">
-          <div className="bg-[#232323] border border-white/10 w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative space-y-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex justify-center items-center p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-8 shadow-2xl relative space-y-6">
             <div>
-              <h3 className="text-2xl font-bold font-ubuntu text-white">
-                {editingResumeItem ? "Edit Timeline Item" : "Add Timeline Item"}
+              <h3 className="text-xl font-bold text-white">
+                {editingResumeItem ? "Modify Timeline Node" : "Append Timeline Node"}
               </h3>
-              <p className="text-xs text-[#ececec]/60 mt-1">
-                Manage resume education, experience, and certification milestones.
-              </p>
+              <p className="text-xs text-[#ececec]/60 mt-1">Configure functional chronologies or verification badges metrics layout.</p>
             </div>
 
             {resumeItemError && (
-              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">
-                {resumeItemError}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">{resumeItemError}</div>
             )}
 
             <form onSubmit={handleSaveResumeItem} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Type</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Classification Type</label>
                   <select
                     value={resumeItemFormData.type}
                     onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, type: e.target.value as any })}
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors cursor-pointer"
+                    className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none cursor-pointer"
                   >
                     <option value="education">Education</option>
                     <option value="experience">Experience</option>
@@ -1847,79 +1807,79 @@ export default function AdminDashboard() {
                   </select>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#ececec]/80 pl-1">Order Index</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Sequence Order</label>
                   <input
                     type="number"
                     value={resumeItemFormData.order_index}
                     onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, order_index: Number(e.target.value) })}
-                    className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
                     required
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Title</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Descriptor Title</label>
                 <input
                   type="text"
                   value={resumeItemFormData.title}
                   onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, title: e.target.value })}
-                  placeholder="e.g. Information Systems"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors"
+                  placeholder="e.g. Master of Engineering"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
                   required
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Subtitle / Instansi</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Host Enterprise / Organization</label>
                 <input
                   type="text"
                   value={resumeItemFormData.subtitle}
                   onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, subtitle: e.target.value })}
-                  placeholder="e.g. BSI University"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors"
+                  placeholder="e.g. Stanford University"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Period</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Temporal Range Period</label>
                 <input
                   type="text"
                   value={resumeItemFormData.period}
                   onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, period: e.target.value })}
-                  placeholder="e.g. 2023 - Now"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors"
+                  placeholder="e.g. 2024 - Present"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">
-                  Description {resumeItemFormData.type === "experience" && "(Use newlines '\\n' for bullet points)"}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">
+                  Analytical Narrative Summary {resumeItemFormData.type === "experience" && "(\\n for linebreaks)"}
                 </label>
                 <textarea
                   value={resumeItemFormData.description}
                   onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, description: e.target.value })}
-                  placeholder="Describe your role or academic details..."
+                  placeholder="Core operational roles summaries..."
                   rows={4}
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] outline-none text-white transition-colors resize-none"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none resize-none"
                 ></textarea>
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+              <div className="flex gap-2.5 justify-end pt-4 border-t border-white/5">
                 <button
                   type="button"
                   onClick={() => setIsResumeItemModalOpen(false)}
-                  className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl hover:bg-white/[0.08] transition-all text-xs font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingResumeItem}
-                  className="px-6 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
                 >
-                  {savingResumeItem ? "Saving..." : "Save Timeline Item"}
+                  {savingResumeItem ? "Processing..." : "Commit Node"}
                 </button>
               </div>
             </form>
@@ -1929,42 +1889,40 @@ export default function AdminDashboard() {
 
       {/* Skill Modal - Add / Edit Form */}
       {isSkillModalOpen && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[9999] flex justify-center items-center p-4">
-          <div className="bg-[#232323] border border-white/10 w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative space-y-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex justify-center items-center p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-8 shadow-2xl relative space-y-6">
             <div>
-              <h3 className="text-2xl font-bold font-ubuntu text-white">
-                {editingSkill ? "Edit Skill" : "Add New Skill"}
+              <h3 className="text-xl font-bold text-white">
+                {editingSkill ? "Modify Skill Matrix" : "Initialize New Skill Matrix"}
               </h3>
               <p className="text-xs text-[#ececec]/60 mt-1">
-                {editingSkill ? "Update existing skill details in database" : "Insert a new dynamic skill entry"}
+                {editingSkill ? "Update designated record sets currently bound to layout." : "Append fresh visual vector stack data directly."}
               </p>
             </div>
 
             {skillError && (
-              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">
-                {skillError}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">{skillError}</div>
             )}
 
             <form onSubmit={handleSaveSkill} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Skill Name</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Skill Identity Token</label>
                 <input
                   type="text"
                   value={skillFormData.name}
                   onChange={(e) => setSkillFormData({ ...skillFormData, name: e.target.value })}
-                  placeholder="e.g. Next.js"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                  placeholder="e.g. Next.js Architecture"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                   required
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Category</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Classification Context</label>
                 <select
                   value={skillFormData.category}
                   onChange={(e) => setSkillFormData({ ...skillFormData, category: e.target.value })}
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors cursor-pointer"
+                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none cursor-pointer"
                 >
                   <option value="Soft Skills">Soft Skills</option>
                   <option value="Back-end Development">Back-end Development</option>
@@ -1973,51 +1931,56 @@ export default function AdminDashboard() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Percentage ({skillFormData.percentage}%)</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={skillFormData.percentage}
-                  onChange={(e) => setSkillFormData({ ...skillFormData, percentage: Number(e.target.value) })}
-                  className="w-full accent-[#ececec] bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={skillFormData.percentage}
-                  onChange={(e) => setSkillFormData({ ...skillFormData, percentage: Math.min(100, Math.max(0, Number(e.target.value))) })}
-                  className="w-20 bg-[#1f1f1f] border border-white/10 rounded-lg px-2 py-1 text-xs focus:border-[#ececec] outline-none text-white transition-colors mt-1"
-                />
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5 flex justify-between">
+                  <span>Relative Power Ratio</span>
+                  <span className="text-white font-mono">{skillFormData.percentage}%</span>
+                </label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={skillFormData.percentage}
+                    onChange={(e) => setSkillFormData({ ...skillFormData, percentage: Number(e.target.value) })}
+                    className="flex-1 accent-white bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={skillFormData.percentage}
+                    onChange={(e) => setSkillFormData({ ...skillFormData, percentage: Math.min(100, Math.max(0, Number(e.target.value))) })}
+                    className="w-16 bg-white/[0.02] border border-white/10 rounded-lg px-2 py-1 text-xs font-mono text-center text-white focus:border-white/30 outline-none"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Tooltip / Description</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Metadata Tooltip Strings</label>
                 <textarea
                   value={skillFormData.tooltip}
                   onChange={(e) => setSkillFormData({ ...skillFormData, tooltip: e.target.value })}
-                  placeholder="Short description shown on hover..."
+                  placeholder="Context explicit micro copy strings on hover overlays..."
                   rows={3}
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors resize-none"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none resize-none"
                 ></textarea>
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+              <div className="flex gap-2.5 justify-end pt-4 border-t border-white/5">
                 <button
                   type="button"
                   onClick={() => setIsSkillModalOpen(false)}
-                  className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl hover:bg-white/[0.08] transition-all text-xs font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={skillSaving}
-                  className="px-6 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
                 >
-                  {skillSaving ? "Saving skill..." : "Save Skill"}
+                  {skillSaving ? "Processing..." : "Commit Matrix Stack"}
                 </button>
               </div>
             </form>
@@ -2027,42 +1990,40 @@ export default function AdminDashboard() {
 
       {/* Modal - Add / Edit Form (Projects) */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[9999] flex justify-center items-center p-4">
-          <div className="bg-[#232323] border border-white/10 w-full max-w-lg rounded-[2rem] p-8 shadow-2xl relative space-y-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex justify-center items-center p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-8 shadow-2xl relative space-y-6">
             <div>
-              <h3 className="text-2xl font-bold font-ubuntu text-white">
-                {editingProject ? "Edit Project" : "Add New Project"}
+              <h3 className="text-xl font-bold text-white">
+                {editingProject ? "Modify Project Record" : "Initialize New Project"}
               </h3>
               <p className="text-xs text-[#ececec]/60 mt-1">
-                {editingProject ? "Update existing project details in database" : "Insert a new dynamic project entry"}
+                {editingProject ? "Update existing deployment definitions stored within database models." : "Deploy a fresh production artifact model token entry."}
               </p>
             </div>
 
             {error && (
-              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">
-                {error}
-              </div>
+              <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-xl text-center">{error}</div>
             )}
 
             <form onSubmit={handleSave} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Project Title</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Project Signature Title</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. My Awesome App Router Website"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                  placeholder="e.g. Enterprise Neural Dashboard"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                   required
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Category</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Technology Domain Category</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors cursor-pointer"
+                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none cursor-pointer"
                 >
                   <option value="Web Development">Web Development</option>
                   <option value="Data Analyst">Data Analyst</option>
@@ -2072,18 +2033,18 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-[#ececec]/80 pl-1">Project Image</label>
+                <label className="block text-xs font-semibold text-[#ececec]/70 pl-0.5">Visual Preview Canvas Asset</label>
                 
                 {/* Image Preview */}
                 {formData.image_url && (
-                  <div className="w-full h-32 rounded-xl overflow-hidden border border-white/10 bg-black/40 relative">
+                  <div className="w-full h-28 rounded-xl overflow-hidden border border-white/10 bg-black/40 relative mb-2">
                     <img
                       src={formData.image_url}
                       alt="Project Preview"
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-[10px] text-white max-w-[200px] truncate" title={formData.image_url}>
-                      Active: {formData.image_url.split('/').pop()}
+                    <div className="absolute bottom-2 right-2 bg-black/80 backdrop-blur-sm border border-white/5 px-2 py-1 rounded text-[9px] text-white/60 max-w-[180px] truncate" title={formData.image_url}>
+                      Model: {formData.image_url.split('/').pop()}
                     </div>
                   </div>
                 )}
@@ -2094,50 +2055,50 @@ export default function AdminDashboard() {
                   onChange={handleProjectImgUpload}
                   disabled={uploadingProjectImg}
                   required={!formData.image_url}
-                  className="block w-full text-sm text-[#ececec]/60 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer disabled:opacity-50"
+                  className="block w-full text-xs text-[#ececec]/40 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer disabled:opacity-40 transition-all duration-300"
                 />
                 
                 {uploadingProjectImg && (
-                  <p className="text-xs text-yellow-400 pl-1 animate-pulse">Uploading project image...</p>
+                  <p className="text-xs text-yellow-400 pl-0.5 animate-pulse">Streaming heavy raster array onto bucket nodes...</p>
                 )}
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">GitHub Link (optional)</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Remote Repository Connection URL (Optional)</label>
                 <input
                   type="text"
                   value={formData.github_url}
                   onChange={(e) => setFormData({ ...formData, github_url: e.target.value })}
-                  placeholder="e.g. https://github.com/my-username/repo"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
+                  placeholder="https://github.com/..."
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Details / Description</label>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Technical Features Stack Narrative</label>
                 <textarea
                   value={formData.details}
                   onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                  placeholder="Summarize key features, Tech stack used, role, achievements..."
+                  placeholder="Elaborate functional design requirements, dependencies, architecture parameters..."
                   rows={4}
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors resize-none"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none transition-all duration-300 resize-none"
                 ></textarea>
               </div>
 
-              <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+              <div className="flex gap-2.5 justify-end pt-4 border-t border-white/5">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl hover:bg-white/[0.08] transition-all text-xs font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2.5 bg-[#ececec] text-[#310606] hover:bg-white rounded-full transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all text-xs font-bold disabled:opacity-50 cursor-pointer"
                 >
-                  {saving ? "Saving change..." : "Save Project"}
+                  {saving ? "Processing..." : "Commit Artifact"}
                 </button>
               </div>
             </form>

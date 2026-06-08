@@ -55,6 +55,7 @@ export default function AdminDashboard() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingProjectImg, setUploadingProjectImg] = useState(false);
 
   // Tab & Profile States - DIPISAH MENJADI "projects" | "hero" | "about" | "skills" | "resume" | "messages"
   const [activeTab, setActiveTab] = useState<"projects" | "hero" | "about" | "skills" | "resume" | "messages">("projects");
@@ -236,6 +237,8 @@ export default function AdminDashboard() {
     setResumeError(null);
     setResumeSuccess(null);
 
+    const oldImageUrl = resumeProfile.image_url;
+
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `resume-${Date.now()}.${fileExt}`;
@@ -250,6 +253,14 @@ export default function AdminDashboard() {
 
       if (error) {
         throw new Error(error.message);
+      }
+
+      if (oldImageUrl && oldImageUrl.includes("/portfolio/")) {
+        const oldFileName = oldImageUrl.split("/portfolio/").pop();
+        if (oldFileName) {
+          const decodedFileName = decodeURIComponent(oldFileName);
+          await supabase.storage.from("portfolio").remove([decodedFileName]);
+        }
       }
 
       const { data: { publicUrl } } = supabase.storage
@@ -528,6 +539,8 @@ export default function AdminDashboard() {
     setProfileError(null);
     setProfileSuccess(null);
 
+    const oldImageUrl = profileForm.about_image_url;
+
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `about-${Date.now()}.${fileExt}`;
@@ -542,6 +555,14 @@ export default function AdminDashboard() {
 
       if (error) {
         throw new Error(error.message);
+      }
+
+      if (oldImageUrl && oldImageUrl.includes("/portfolio/")) {
+        const oldFileName = oldImageUrl.split("/portfolio/").pop();
+        if (oldFileName) {
+          const decodedFileName = decodeURIComponent(oldFileName);
+          await supabase.storage.from("portfolio").remove([decodedFileName]);
+        }
       }
 
       const { data: { publicUrl } } = supabase.storage
@@ -651,6 +672,55 @@ export default function AdminDashboard() {
     setIsModalOpen(true);
   };
 
+  const handleProjectImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingProjectImg(true);
+    setError(null);
+
+    const oldImageUrl = formData.image_url;
+
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `project-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data, error: uploadError } = await supabase.storage
+        .from("portfolio")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (uploadError) {
+        throw new Error(uploadError.message);
+      }
+
+      if (oldImageUrl && oldImageUrl.includes("/portfolio/")) {
+        const oldFileName = oldImageUrl.split("/portfolio/").pop();
+        if (oldFileName) {
+          const decodedFileName = decodeURIComponent(oldFileName);
+          await supabase.storage.from("portfolio").remove([decodedFileName]);
+        }
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("portfolio")
+        .getPublicUrl(filePath);
+
+      setFormData((prev) => ({
+        ...prev,
+        image_url: publicUrl,
+      }));
+    } catch (err: any) {
+      console.error("Error uploading project image:", err);
+      setError(err.message || "Failed to upload project image.");
+    } finally {
+      setUploadingProjectImg(false);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -694,9 +764,20 @@ export default function AdminDashboard() {
     const confirmed = window.confirm(`Are you sure you want to delete the project "${title}"? This action is permanent.`);
     if (!confirmed) return;
 
+    const projectToDelete = projects.find((p) => p.id === id);
+    const imageUrl = projectToDelete?.image_url;
+
     try {
       const res = await deleteProject(id);
       if (!res.success) throw new Error(res.error);
+
+      if (imageUrl && imageUrl.includes("/portfolio/")) {
+        const fileName = imageUrl.split("/portfolio/").pop();
+        if (fileName) {
+          const decodedFileName = decodeURIComponent(fileName);
+          await supabase.storage.from("portfolio").remove([decodedFileName]);
+        }
+      }
       
       router.refresh();
       await fetchProjects();
@@ -1990,16 +2071,35 @@ export default function AdminDashboard() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#ececec]/80 pl-1">Image URL or Local Asset Path</label>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#ececec]/80 pl-1">Project Image</label>
+                
+                {/* Image Preview */}
+                {formData.image_url && (
+                  <div className="w-full h-32 rounded-xl overflow-hidden border border-white/10 bg-black/40 relative">
+                    <img
+                      src={formData.image_url}
+                      alt="Project Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-[10px] text-white max-w-[200px] truncate" title={formData.image_url}>
+                      Active: {formData.image_url.split('/').pop()}
+                    </div>
+                  </div>
+                )}
+
                 <input
-                  type="text"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="e.g. /assets/img/portfolio/Web Development/img.jpg"
-                  className="w-full bg-[#1f1f1f] border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#ececec] focus:ring-1 focus:ring-[#ececec] outline-none text-white transition-colors"
-                  required
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProjectImgUpload}
+                  disabled={uploadingProjectImg}
+                  required={!formData.image_url}
+                  className="block w-full text-sm text-[#ececec]/60 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer disabled:opacity-50"
                 />
+                
+                {uploadingProjectImg && (
+                  <p className="text-xs text-yellow-400 pl-1 animate-pulse">Uploading project image...</p>
+                )}
               </div>
 
               <div className="space-y-1.5">

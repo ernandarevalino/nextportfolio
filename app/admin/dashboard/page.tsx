@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { logoutAction } from "@/actions/auth";
-import { getProjects, createProject, updateProject, deleteProject, getProfile, updateProfile, getSkills, createSkill, updateSkill, deleteSkill, getResumeData, updateResumeProfile, createResumeSkill, updateResumeSkill, deleteResumeSkill, createResumeItem, updateResumeItem, deleteResumeItem } from "@/actions/portfolio";
+import { getProjects, createProject, updateProject, deleteProject, getProfile, updateProfile, getSkills, createSkill, updateSkill, deleteSkill, getResumeData, updateResumeProfile, createResumeSkill, updateResumeSkill, deleteResumeSkill, createResumeItem, updateResumeItem, deleteResumeItem, getContacts, deleteContact } from "@/actions/portfolio";
 import { supabase } from "@/lib/supabase";
 import {
   BsPlusLg,
@@ -15,7 +15,9 @@ import {
   BsGithub,
   BsInstagram,
   BsLinkedin,
-  BsPerson
+  BsPerson,
+  BsEnvelope,
+  BsFileEarmarkText
 } from "react-icons/bs";
 
 interface Project {
@@ -25,6 +27,15 @@ interface Project {
   image_url: string;
   github_url: string;
   details: string;
+}
+
+interface Contact {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  created_at: string;
 }
 
 export default function AdminDashboard() {
@@ -45,8 +56,13 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Tab & Profile States - DIPISAH MENJADI "projects" | "hero" | "about" | "skills" | "resume"
-  const [activeTab, setActiveTab] = useState<"projects" | "hero" | "about" | "skills" | "resume">("projects");
+  // Tab & Profile States - DIPISAH MENJADI "projects" | "hero" | "about" | "skills" | "resume" | "messages"
+  const [activeTab, setActiveTab] = useState<"projects" | "hero" | "about" | "skills" | "resume" | "messages">("projects");
+
+  // Contacts State
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contactsLoading, setContactsLoading] = useState(true);
+  const [contactsError, setContactsError] = useState<string | null>(null);
   const [profileForm, setProfileForm] = useState({
     hero_title: "",
     hero_name: "",
@@ -131,7 +147,42 @@ export default function AdminDashboard() {
     fetchProfile();
     fetchAllSkills();
     fetchResumeDashboardData();
+    fetchContacts();
   }, []);
+
+  async function fetchContacts() {
+    setContactsLoading(true);
+    setContactsError(null);
+    try {
+      const res = await getContacts();
+      if (res.success) {
+        setContacts(res.data || []);
+      } else {
+        throw new Error(res.error);
+      }
+    } catch (err: any) {
+      console.error("Error fetching contacts in dashboard:", err);
+      setContactsError(err.message || "Failed to load messages.");
+    } finally {
+      setContactsLoading(false);
+    }
+  }
+
+  const handleDeleteContact = async (id: number, senderName: string) => {
+    const confirmed = window.confirm(`Are you sure you want to delete the message from "${senderName}"? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      const res = await deleteContact(id);
+      if (!res.success) throw new Error(res.error);
+      
+      router.refresh();
+      await fetchContacts();
+    } catch (err: any) {
+      console.error("Error deleting contact:", err);
+      alert("Failed to delete message: " + err.message);
+    }
+  };
 
   async function fetchResumeDashboardData() {
     setResumeLoading(true);
@@ -746,6 +797,16 @@ export default function AdminDashboard() {
           >
             Manage Resume
           </button>
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`pb-4 px-2 text-base font-semibold border-b-2 transition-all cursor-pointer ${
+              activeTab === "messages"
+                ? "border-[#ececec] text-white"
+                : "border-transparent text-[#ececec]/60 hover:text-white"
+            }`}
+          >
+            Inbox Messages
+          </button>
         </div>
 
         {/* PROJECTS TAB */}
@@ -833,6 +894,13 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex justify-center items-center gap-3">
+                              <button
+                                onClick={() => router.push(`/admin/view?id=${project.id}`)}
+                                className="p-2.5 bg-white/5 border border-white/10 hover:border-amber-400 text-[#ececec] hover:text-amber-400 rounded-xl transition-all cursor-pointer"
+                                title="Manage Article Content"
+                              >
+                                <BsFileEarmarkText className="text-base" />
+                              </button>
                               <button
                                 onClick={() => handleOpenEdit(project)}
                                 className="p-2.5 bg-white/5 border border-white/10 hover:border-[#ececec] text-[#ececec] hover:text-white rounded-xl transition-all cursor-pointer"
@@ -1510,6 +1578,90 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* MESSAGES / INBOX TAB */}
+        {activeTab === "messages" && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center bg-[#232323] p-6 rounded-2xl border border-white/10">
+              <div className="text-lg font-bold font-ubuntu">
+                Total Messages: <span className="text-white bg-white/10 px-2.5 py-1 rounded-md text-sm ml-1">{contacts.length}</span>
+              </div>
+              <button
+                onClick={fetchContacts}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 transition-all text-sm font-semibold cursor-pointer"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {contactsLoading ? (
+              <div className="bg-[#232323] p-20 rounded-[2rem] text-center border border-white/10 flex flex-col items-center justify-center space-y-4">
+                <div className="w-12 h-12 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-[#ececec]/60">Fetching messages...</p>
+              </div>
+            ) : contactsError ? (
+              <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 py-4 px-6 rounded-xl text-center">
+                {contactsError}
+              </div>
+            ) : contacts.length === 0 ? (
+              <div className="bg-[#232323] p-16 rounded-[2rem] text-center border border-white/10 space-y-4">
+                <BsEnvelope className="text-5xl mx-auto text-white/30" />
+                <p className="text-[#ececec]/60 text-lg">No incoming messages yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {contacts.map((contact) => (
+                  <div
+                    key={contact.id}
+                    className="bg-[#232323] p-6 rounded-2xl border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-4 relative group"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-start gap-4">
+                        <div>
+                          <h3 className="text-lg font-bold text-white font-ubuntu">{contact.name}</h3>
+                          <a
+                            href={`mailto:${contact.email}`}
+                            className="text-xs text-[#ececec]/60 hover:text-white hover:underline transition-colors break-all"
+                          >
+                            {contact.email}
+                          </a>
+                        </div>
+                        <span className="text-[11px] text-white/40 whitespace-nowrap bg-white/5 px-2.5 py-1 rounded border border-white/5">
+                          {new Date(contact.created_at).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </span>
+                      </div>
+
+                      <div className="border-t border-white/5 pt-3">
+                        <div className="text-xs font-bold text-[#ececec]/80 uppercase tracking-wider mb-1">
+                          Subject: <span className="text-[#ececec] normal-case tracking-normal">{contact.subject}</span>
+                        </div>
+                        <p className="text-sm text-[#ececec]/85 leading-relaxed bg-black/20 p-4 rounded-xl border border-white/5 whitespace-pre-wrap break-words mt-2">
+                          {contact.message}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-2">
+                      <button
+                        onClick={() => handleDeleteContact(contact.id, contact.name)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-600/10 border border-red-500/20 hover:bg-red-600 hover:border-red-500 text-red-400 hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer"
+                        title="Delete Message"
+                      >
+                        <BsTrash className="text-xs" /> Delete Message
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

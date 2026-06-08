@@ -6,7 +6,6 @@ import {
   BsPerson,
   BsHddStack,
   BsFileEarmarkText,
-  BsMenuButton,
   BsImages,
   BsEnvelope,
   BsList,
@@ -27,7 +26,6 @@ export default function Header() {
     { id: "about", label: "About", icon: BsPerson },
     { id: "skills", label: "Skills", icon: BsHddStack },
     { id: "resume", label: "Resume", icon: BsFileEarmarkText },
-    { id: "stats", label: "Project", icon: BsMenuButton },
     { id: "portfolio", label: "Portfolio", icon: BsImages },
     { id: "contact", label: "Contact", icon: BsEnvelope },
   ];

@@ -410,3 +410,38 @@ export async function deleteResumeItem(id: number) {
     return { success: false, error: err.message };
   }
 }
+
+export async function getContacts() {
+  try {
+    const { data, error } = await supabase
+      .from("contacts")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching contacts in getContacts action:", error);
+      return { success: false, error: error.message, data: [] };
+    }
+    return { success: true, data: data || [] };
+  } catch (err: any) {
+    console.error("Exception in getContacts action:", err);
+    return { success: false, error: err.message, data: [] };
+  }
+}
+
+export async function deleteContact(id: number) {
+  try {
+    const { error } = await supabase.from("contacts").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting contact in deleteContact action:", error);
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/dashboard");
+    return { success: true };
+  } catch (err: any) {
+    console.error("Exception in deleteContact action:", err);
+    return { success: false, error: err.message };
+  }
+}

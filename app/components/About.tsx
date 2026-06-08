@@ -27,31 +27,18 @@ interface AboutProps {
   profile: Profile | null;
 }
 
-const defaultAbout = {
-  about_image_url: "/assets/img/profile/profile-3.jpg",
-  about_name: "Ernanda Revalino",
-  about_title: "Web Development & Data Analyst Aspiring",
-  about_email: "ernandarevalino@gmail.com",
-  about_phone: "+62 857-1020-9622",
-  about_location: "Serpong, Tangerang Selatan",
-  about_maps_url: "https://maps.app.goo.gl/uHZRvx4thS6Nh1PC7",
-  about_heading: "Writing code with purpose, turning data into direction",
-  about_bio_1: "Im an enthusiastic Information Systems student with a strong passion for web development and data analysis. With hands-on experience building from Python CLI systems to Laravel web apps, I always aim to align technology with real business needs.",
-  about_bio_2: "I believe in teamwork is everything, continuous learning, and creating solutions that are not only impressive but also impactful. Currently, Im focusing on deepening my skills in Laravel backend and data analysis tools like Power BI and Looker Studio while continuing to strengthen my Python foundation."
-};
-
 export default function About({ profile }: AboutProps) {
   const data = {
-    about_image_url: profile?.about_image_url || defaultAbout.about_image_url,
-    about_name: profile?.about_name || defaultAbout.about_name,
-    about_title: profile?.about_title || defaultAbout.about_title,
-    about_email: profile?.about_email || defaultAbout.about_email,
-    about_phone: profile?.about_phone || defaultAbout.about_phone,
-    about_location: profile?.about_location || defaultAbout.about_location,
-    about_maps_url: profile?.about_maps_url || defaultAbout.about_maps_url,
-    about_heading: profile?.about_heading || defaultAbout.about_heading,
-    about_bio_1: profile?.about_bio_1 || defaultAbout.about_bio_1,
-    about_bio_2: profile?.about_bio_2 || defaultAbout.about_bio_2,
+    about_image_url: profile?.about_image_url || "",
+    about_name: profile?.about_name || "",
+    about_title: profile?.about_title || "",
+    about_email: profile?.about_email || "",
+    about_phone: profile?.about_phone || "",
+    about_location: profile?.about_location || "",
+    about_maps_url: profile?.about_maps_url || "",
+    about_heading: profile?.about_heading || "",
+    about_bio_1: profile?.about_bio_1 || "",
+    about_bio_2: profile?.about_bio_2 || "",
   };
 
   return (

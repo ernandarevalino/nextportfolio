@@ -2,21 +2,13 @@
 
 import { useState } from "react";
 import {
-  BsEmojiSmile,
-  BsJournalRichtext,
-  BsHeadset,
-  BsTools,
-  BsPlusLg,
+  BsEye,
   BsGithub
 } from "react-icons/bs";
-
-interface StatItem {
-  icon: any;
-  value: string;
-  label: string;
-}
+import Link from "next/link";
 
 interface PortfolioItem {
+  id: number;
   title: string;
   category: string;
   categoryKey: string;
@@ -25,38 +17,6 @@ interface PortfolioItem {
   detailsUrl?: string;
 }
 
-// Fallback static items to guarantee seamless UI on connection issues or empty DB
-const staticPortfolioItems: PortfolioItem[] = [
-  {
-    title: "SMP Anak Bangsa E-Learning",
-    category: "Web Development",
-    categoryKey: "webdev",
-    imgSrc: "/assets/img/portfolio/Web Development/SMP Anak Bangsa E-Learning Project - Laravel/dazai-3.jpg",
-    githubUrl: "https://github.com/ernandarevalino/E-Learning-SMP-Larvel-11"
-  },
-  {
-    title: "Game Community",
-    category: "Web Development",
-    categoryKey: "webdev",
-    imgSrc: "/assets/img/portfolio/Web Development/Game Comunity/dazai-1.jpg",
-    githubUrl: "#"
-  },
-  {
-    title: "Data Analysis Project - SPSS & Excel",
-    category: "Data Analyst",
-    categoryKey: "analyst",
-    imgSrc: "/assets/img/portfolio/Data Analyst/Data Analysis Project - SPSS & Excel/dazai-4.jpg",
-    githubUrl: "#"
-  },
-  {
-    title: "Car Showroom Project - Python CLI",
-    category: "Etc",
-    categoryKey: "etc",
-    imgSrc: "/assets/img/portfolio/etc/Car Showroom Project - Python CLI/dazai-2.jpg",
-    githubUrl: "https://github.com/ernandarevalino/Showroom-Mobil-CLI"
-  }
-];
-
 interface PortfolioProps {
   projects?: any[];
 }
@@ -64,13 +24,6 @@ interface PortfolioProps {
 export default function Portfolio({ projects = [] }: PortfolioProps) {
   const [activeFilter, setActiveFilter] = useState("all");
   const loading = false;
-
-  const stats: StatItem[] = [
-    { icon: BsEmojiSmile, value: "95%", label: "Positive Feedback (%)" },
-    { icon: BsJournalRichtext, value: "20", label: "Completed Projects (in total)" },
-    { icon: BsHeadset, value: "780+", label: "Hours of Learning & Coding" },
-    { icon: BsTools, value: "12", label: "Tech Stacks Used" },
-  ];
 
   const filters = [
     { key: "all", label: "All Projects" },
@@ -90,6 +43,7 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
         else if (lowerCat.includes("mobile")) catKey = "mobdev";
 
         return {
+          id: item.id,
           title: item.title,
           category: item.category,
           categoryKey: catKey,
@@ -97,7 +51,7 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
           githubUrl: item.github_url || "#"
         };
       })
-    : staticPortfolioItems;
+    : [];
 
   const filteredItems = activeFilter === "all"
     ? mappedProjects
@@ -106,46 +60,6 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
   return (
     <div className="space-y-20">
       
-      {/* Stats / Project Summary Section */}
-      <section id="stats" className="py-20 bg-[#232323]/50 text-white border-y border-white/5">
-        <div className="container mx-auto px-4 md:px-8">
-          
-          <div className="section-title text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold font-ubuntu tracking-wide text-white uppercase inline-block">
-              Project Stats
-            </h2>
-            <p className="text-[#ececec]/70 mt-4 text-base md:text-lg">
-              Some achievements I've built
-            </p>
-          </div>
-
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {stats.map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="bg-[#232323] p-8 rounded-2xl text-center border border-white/10 hover:border-[#ececec] transition-all duration-300 hover:-translate-y-1 shadow-lg"
-                  >
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/10 text-[#ececec] text-2xl rounded-full mb-4">
-                      <Icon />
-                    </div>
-                    <div className="text-3xl md:text-4xl font-bold font-ubuntu mb-2 text-white">
-                      {stat.value}
-                    </div>
-                    <p className="text-sm text-[#ececec]/70 font-medium">
-                      {stat.label}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-        </div>
-      </section>
-
       {/* Portfolio Gallery Section */}
       <section id="portfolio" className="py-20 bg-[#1f1f1f] text-white">
         <div className="container mx-auto px-4 md:px-8">
@@ -236,15 +150,13 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
                               <BsGithub className="text-lg" />
                             </a>
                           )}
-                          <a
-                            href={item.imgSrc}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <Link
+                            href={`/portfolio/${item.id}`}
                             className="w-11 h-11 bg-[#ececec] text-[#310606] rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300"
-                            title="View Full Image"
+                            title="View Details"
                           >
-                            <BsPlusLg className="text-lg" />
-                          </a>
+                            <BsEye className="text-lg" />
+                          </Link>
                         </div>
                       </div>
 

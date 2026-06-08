@@ -37,122 +37,10 @@ interface ResumeItem {
   order_index: number;
 }
 
-const defaultProfile: ResumeProfile = {
-  id: 1,
-  summary: "Turn hope into ideas, ideas into logic, logic into impact.",
-  location: "Serpong, Tangerang Selatan",
-  email: "ernandarevalino@gmail.com",
-  phone: "+62 857-1020-9622",
-  image_url: "https://i.pinimg.com/originals/62/c2/a2/62c2a216def9a504b2ff23adb67853b7.gif"
-};
-
-const defaultSkills: ResumeSkill[] = [
-  { id: 1, name: "Web Development", percentage: 95 },
-  { id: 2, name: "Data Analyst", percentage: 85 },
-  { id: 3, name: "Project Management", percentage: 80 },
-  { id: 4, name: "Mobile Development", percentage: 70 }
-];
-
-const defaultItems: ResumeItem[] = [
-  // Education
-  {
-    id: 1,
-    type: "education",
-    title: "Madrasah Tsanawiyah",
-    subtitle: "MTS Serpong Kota Tangerang Selatan",
-    period: "2016 - 2019",
-    description: "Graduated with good academic performance.",
-    order_index: 1
-  },
-  {
-    id: 2,
-    type: "education",
-    title: "Science Major",
-    subtitle: "MAN 1 Kota Tangerang Selatan",
-    period: "2019 - 2022",
-    description: "Science stream with focus on mathematics and informatics.",
-    order_index: 2
-  },
-  {
-    id: 3,
-    type: "education",
-    title: "Information Systems",
-    subtitle: "BSI University",
-    period: "2023 - Now",
-    description: "Dean's List recipient (all semesters), GPA 4.00 / 4.00. Active in HIMSI and various academic projects in data analysis and web development.",
-    order_index: 3
-  },
-  // Experience
-  {
-    id: 4,
-    type: "experience",
-    title: "Information Systems Student Association (HIMSI)",
-    subtitle: "Bina Sarana Informatika University",
-    period: "2023 - Present",
-    description: "Actively participated in HIMSI activities and various technology seminars\nDeveloped collaboration between members and divisions through internal projects and skill training programs\nHIMSI Teaching Program: Taught information technology-related materials to members/students/external participants to enhance communication and leadership skills",
-    order_index: 4
-  },
-  {
-    id: 5,
-    type: "experience",
-    title: "Business Intelligence Project - Power BI",
-    subtitle: "4th Semester Final Project",
-    period: "January - July 2025",
-    description: "Conducted analysis of best-selling video games in Europe by genre and platform using Video Game Sales dataset from Kaggle\nCleaned, modeled, and visualized data using Microsoft Power BI\nPresented visual insights on popular genres and platforms, year-over-year sales trends, and genre-platform correlations\nConcluded the dominance of Sports and Action genres, with PlayStation as the most popular platform in the European market",
-    order_index: 5
-  },
-  {
-    id: 6,
-    type: "experience",
-    title: "SMP Anak Bangsa E-Learning Project - Laravel",
-    subtitle: "3rd Semester Final Project",
-    period: "August - December 2024",
-    description: "Developed a Laravel and MySQL-based school administration website for SMP Anak Bangsa\nImplemented multi-role login features (admin, teacher, student) with authentication system and different access permissions\nProvided structured CRUD features for managing teacher, student, class, and subject data through admin dashboard\nCreated complex database relationships (ERD) using Laravel Eloquent ORM covering users, teachers, students, subjects, assignments, and attendance",
-    order_index: 6
-  },
-  {
-    id: 7,
-    type: "experience",
-    title: "Data Analysis Project - SPSS & Excel",
-    subtitle: "3rd Semester Final Project",
-    period: "August - December 2024",
-    description: "Analyzed fashion preference data from 130 Tangerang respondents via Google Forms\nPerformed data validation, Spearman correlation tests, and age distribution analysis using SPSS\nCreated visualizations of respondents and fashion preferences using pie charts and bar graphs\nConcluded that lifestyle has more influence than age on fashion preferences",
-    order_index: 7
-  },
-  {
-    id: 8,
-    type: "experience",
-    title: "Laptop Data Analysis Project - Jupyter & Colab",
-    subtitle: "2nd Semester Final Project",
-    period: "January - July 2024",
-    description: "Processed and analyzed laptop survey data using Python, Jupyter & Google Colab\nDisplayed price distribution, brands, and specifications with interactive visualizations\nPerformed data cleaning and correlation analysis between features using Pandas and Seaborn\nCompiled visual reports based on purchasing trends and consumer preferences",
-    order_index: 8
-  },
-  {
-    id: 9,
-    type: "experience",
-    title: "Car Showroom Project - Python CLI",
-    subtitle: "1st Semester Final Project",
-    period: "August - December 2023",
-    description: "Developed a Command-Line Interface (CLI) application for managing a virtual car showroom using Python\nImplemented key features such as order processing, dynamic discount system, cash & credit payments, and stock management\nIntegrated user input validation and real-time receipt generation with simulated promotional offers\nEnabled users to search, filter, add, edit, and delete car stock data interactively\nUtilized Python libraries including Colorama, Datetime, and Random for interactive visuals and random promo generation",
-    order_index: 9
-  },
-  // Certifications
-  {
-    id: 10,
-    type: "certification",
-    title: "Google Cloud Certification",
-    subtitle: "Google Cloud",
-    period: "2021",
-    description: "",
-    order_index: 10
-  }
-];
-
 export default function Resume() {
-  const [profile, setProfile] = useState<ResumeProfile>(defaultProfile);
-  const [skills, setSkills] = useState<ResumeSkill[]>(defaultSkills);
-  const [items, setItems] = useState<ResumeItem[]>(defaultItems);
+  const [profile, setProfile] = useState<ResumeProfile | null>(null);
+  const [skills, setSkills] = useState<ResumeSkill[]>([]);
+  const [items, setItems] = useState<ResumeItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -216,7 +104,7 @@ export default function Resume() {
             <div className="bg-[#232323] p-8 rounded-[2rem] border border-white/10 shadow-xl space-y-6">
               
               {/* Profile GIF */}
-              {profile.image_url && (
+              {profile?.image_url && (
                 <div className="overflow-hidden rounded-2xl border border-white/10 shadow-lg bg-black/20">
                   <img
                     src={profile.image_url}
@@ -230,7 +118,7 @@ export default function Resume() {
               <div className="space-y-3">
                 <h3 className="text-xl font-bold font-ubuntu text-white">Summary</h3>
                 <p className="text-sm md:text-base text-[#ececec]/85 italic leading-relaxed">
-                  &ldquo;{profile.summary}&rdquo;
+                  &ldquo;{profile?.summary || ""}&rdquo;
                 </p>
               </div>
 
@@ -238,19 +126,19 @@ export default function Resume() {
               <div className="space-y-4 border-t border-white/10 pt-4">
                 <h3 className="text-xl font-bold font-ubuntu text-white">Contact Information</h3>
                 <ul className="space-y-3 text-[#ececec]/80 text-sm md:text-base">
-                  {profile.location && (
+                  {profile?.location && (
                     <li className="flex items-center gap-3">
                       <BsGeoAlt className="text-white shrink-0 text-lg" />
                       <span>{profile.location}</span>
                     </li>
                   )}
-                  {profile.email && (
+                  {profile?.email && (
                     <li className="flex items-center gap-3">
                       <BsEnvelope className="text-white shrink-0 text-lg" />
                       <span className="truncate">{profile.email}</span>
                     </li>
                   )}
-                  {profile.phone && (
+                  {profile?.phone && (
                     <li className="flex items-center gap-3">
                       <BsTelephone className="text-white shrink-0 text-lg" />
                       <span>{profile.phone}</span>

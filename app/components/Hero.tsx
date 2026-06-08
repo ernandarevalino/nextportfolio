@@ -14,21 +14,6 @@ interface Profile {
   instagram_url: string;
 }
 
-const defaultProfile: Omit<Profile, "id"> = {
-  hero_title: "Hellow !!",
-  hero_name: "Ernanda",
-  hero_description: "Im a 5th-semester Information Systems student at Bina Sarana Informatika University. Always excited to learn new technologies and bring innovative ideas into real projects.",
-  typewriter_words: [
-    "Information Systems Student",
-    "Web Developer",
-    "UI/UX Enthusiast",
-    "Aspiring Data Analyst"
-  ],
-  github_url: "https://github.com/ernandarevalino",
-  linkedin_url: "https://www.linkedin.com/in/ernanda-revalino-493751246",
-  instagram_url: "https://www.instagram.com/"
-};
-
 // Custom Typewriter component for the typing effect
 function Typewriter({ words, speed = 100, delay = 2000 }: { words: string[]; speed?: number; delay?: number }) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -88,15 +73,13 @@ interface HeroProps {
 
 export default function Hero({ profile }: HeroProps) {
   const data = {
-    hero_title: profile?.hero_title || defaultProfile.hero_title,
-    hero_name: profile?.hero_name || defaultProfile.hero_name,
-    hero_description: profile?.hero_description || defaultProfile.hero_description,
-    typewriter_words: (profile?.typewriter_words && profile.typewriter_words.length > 0)
-      ? profile.typewriter_words
-      : defaultProfile.typewriter_words,
-    github_url: profile?.github_url || defaultProfile.github_url,
-    linkedin_url: profile?.linkedin_url || defaultProfile.linkedin_url,
-    instagram_url: profile?.instagram_url || defaultProfile.instagram_url,
+    hero_title: profile?.hero_title || "",
+    hero_name: profile?.hero_name || "",
+    hero_description: profile?.hero_description || "",
+    typewriter_words: profile?.typewriter_words || [],
+    github_url: profile?.github_url || "",
+    linkedin_url: profile?.linkedin_url || "",
+    instagram_url: profile?.instagram_url || "",
   };
 
   return (
@@ -189,7 +172,7 @@ export default function Hero({ profile }: HeroProps) {
               <div className="relative w-[280px] h-[280px] md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px]">
                 <div className="absolute top-[15px] left-[15px] w-full h-full bg-[#ececec]/10 border border-white/20 rounded-[30px] z-1"></div>
                 <img
-                  src="/image-animation/video-hero.webp"
+                  src="/image-animation/video-1.gif"
                   alt="Hero"
                   className="relative w-full h-full object-cover rounded-[30px] z-10 border border-white/10"
                 />

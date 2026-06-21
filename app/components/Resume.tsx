@@ -158,7 +158,9 @@ export default function Resume() {
 
   // Group items by type
   const educationItems = items.filter((item) => item.type === "education");
-  const experienceItems = items.filter((item) => item.type === "experience");
+  const experienceItems = items
+  .filter((item) => item.type === "experience")
+  .sort((a, b) => b.order_index - a.order_index);
   const certificationItems = items.filter((item) => item.type === "certification");
 
   // Logika pembuatan link interaktif otomatis

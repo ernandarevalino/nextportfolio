@@ -22,11 +22,13 @@ import {
 
 interface Project {
   id: number;
-  title: string;
+  title_id: string;
+  title_en: string;
   category: string;
   image_url: string;
   github_url: string;
-  details: string;
+  details_id: string;
+  details_en: string;
 }
 
 interface Contact {
@@ -42,46 +44,68 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProjectFilter, setSelectedProjectFilter] = useState<string>('all');
+
+  const filteredProjects = projects.filter(
+    project => selectedProjectFilter === 'all' || project.category === selectedProjectFilter
+  );
+
+  // Single file replacement tracking states
+  const [replacedProjectImgUrl, setReplacedProjectImgUrl] = useState<string | null>(null);
+  const [originalProfileImgUrl, setOriginalProfileImgUrl] = useState<string | null>(null);
+  const [replacedProfileImgUrl, setReplacedProfileImgUrl] = useState<string | null>(null);
+  const [originalResumeImgUrl, setOriginalResumeImgUrl] = useState<string | null>(null);
+  const [replacedResumeImgUrl, setReplacedResumeImgUrl] = useState<string | null>(null);
   
   // Modal & Form States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [formData, setFormData] = useState({
-    title: "",
+    title_id: "",
+    title_en: "",
     category: "Web Development",
     image_url: "",
     github_url: "",
-    details: ""
+    details_id: "",
+    details_en: ""
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadingProjectImg, setUploadingProjectImg] = useState(false);
 
   // Tab & Profile States - DIPISAH MENJADI "projects" | "hero" | "about" | "skills" | "resume" | "messages"
-  const [activeTab, setActiveTab] = useState<"projects" | "hero" | "about" | "skills" | "resume" | "messages">("projects");
+  const [activeTab, setActiveTab] = useState<"projects" | "hero" | "about" | "skills" | "resume" | "messages">("hero");
 
   // Contacts State
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [contactsLoading, setContactsLoading] = useState(true);
   const [contactsError, setContactsError] = useState<string | null>(null);
   const [profileForm, setProfileForm] = useState({
-    hero_title: "",
+    hero_title_id: "",
+    hero_title_en: "",
     hero_name: "",
-    hero_description: "",
-    typewriter_words_str: "",
+    hero_description_id: "",
+    hero_description_en: "",
+    typewriter_words_str_id: "",
+    typewriter_words_str_en: "",
     github_url: "",
     linkedin_url: "",
     instagram_url: "",
     about_image_url: "",
     about_name: "",
-    about_title: "",
+    about_title_id: "",
+    about_title_en: "",
     about_email: "",
     about_phone: "",
-    about_location: "",
+    about_location_id: "",
+    about_location_en: "",
     about_maps_url: "",
-    about_heading: "",
-    about_bio_1: "",
-    about_bio_2: ""
+    about_heading_id: "",
+    about_heading_en: "",
+    about_bio_1_id: "",
+    about_bio_1_en: "",
+    about_bio_2_id: "",
+    about_bio_2_en: ""
   });
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -91,20 +115,45 @@ export default function AdminDashboard() {
   // Skills States
   const [skills, setSkills] = useState<any[]>([]);
   const [skillsLoading, setSkillsLoading] = useState(true);
+  const [selectedSkillFilter, setSelectedSkillFilter] = useState<string>('all');
+
+  // Normalisasi kategori lama jika sewaktu-waktu ada data legacy di DB
+  const normalizedSkills = skills.map(skill => {
+    let category = skill.category;
+    if (category === "UI/UX Design Skills" || category === "Front-end Development") {
+      category = "UI/UX & Frontend Development";
+    }
+    if (category === "Data Analyst Tools") {
+      category = "Framework & Other";
+    }
+    return { ...skill, category };
+  });
+
+  // Filter skills based on selected category
+  const filteredSkills = normalizedSkills.filter(skill => {
+    if (selectedSkillFilter === 'all') return true;
+    if (selectedSkillFilter === 'Data Analytics & Science') {
+      return skill.category === 'Framework & Other';
+    }
+    return skill.category === selectedSkillFilter;
+  });
+
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState<any | null>(null);
   const [skillFormData, setSkillFormData] = useState({
     name: "",
     category: "Soft Skills",
     percentage: 50,
-    tooltip: ""
+    tooltip_id: "",
+    tooltip_en: ""
   });
   const [skillSaving, setSkillSaving] = useState(false);
   const [skillError, setSkillError] = useState<string | null>(null);
 
   // Resume State
   const [resumeProfile, setResumeProfile] = useState({
-    summary: "",
+    summary_id: "",
+    summary_en: "",
     location: "",
     email: "",
     phone: "",
@@ -112,11 +161,16 @@ export default function AdminDashboard() {
   });
   const [resumeSkills, setResumeSkills] = useState<any[]>([]);
   const [resumeItems, setResumeItems] = useState<any[]>([]);
+  const [selectedResumeType, setSelectedResumeType] = useState<'all' | 'education' | 'experience' | 'certification'>('all');
   const [resumeLoading, setResumeLoading] = useState(true);
   const [savingResumeProfile, setSavingResumeProfile] = useState(false);
   const [uploadingResumeImg, setUploadingResumeImg] = useState(false);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [resumeSuccess, setResumeSuccess] = useState<string | null>(null);
+
+  const filteredResumeItems = resumeItems.filter(
+    item => selectedResumeType === 'all' || item.type === selectedResumeType
+  );
 
   // Resume Skills Modal State
   const [isResumeSkillModalOpen, setIsResumeSkillModalOpen] = useState(false);
@@ -132,11 +186,15 @@ export default function AdminDashboard() {
   const [isResumeItemModalOpen, setIsResumeItemModalOpen] = useState(false);
   const [editingResumeItem, setEditingResumeItem] = useState<any | null>(null);
   const [resumeItemFormData, setResumeItemFormData] = useState({
-    type: "education",
-    title: "",
-    subtitle: "",
-    period: "",
-    description: "",
+    type: "education" as "education" | "experience" | "certification",
+    title_id: "",
+    title_en: "",
+    subtitle_id: "",
+    subtitle_en: "",
+    period_id: "",
+    period_en: "",
+    description_id: "",
+    description_en: "",
     order_index: 1
   });
   const [savingResumeItem, setSavingResumeItem] = useState(false);
@@ -191,8 +249,10 @@ export default function AdminDashboard() {
       const res = await getResumeData();
       if (res.success && res.data) {
         if (res.data.profile) {
+          setOriginalResumeImgUrl(res.data.profile.image_url || null);
           setResumeProfile({
-            summary: res.data.profile.summary || "",
+            summary_id: res.data.profile.summary_id || "",
+            summary_en: res.data.profile.summary_en || "",
             location: res.data.profile.location || "",
             email: res.data.profile.email || "",
             phone: res.data.profile.phone || "",
@@ -218,6 +278,22 @@ export default function AdminDashboard() {
     try {
       const res = await updateResumeProfile(resumeProfile);
       if (!res.success) throw new Error(res.error);
+
+      // --- DISCARD REPLACED PHYSICAL FILE FROM STORAGE ---
+      if (replacedResumeImgUrl) {
+        try {
+          const filePart = replacedResumeImgUrl.split("/portfolio/").pop();
+          if (filePart) {
+            const decoded = decodeURIComponent(filePart);
+            await supabase.storage.from("portfolio").remove([decoded]);
+          }
+        } catch (storageErr) {
+          console.error("Error deleting replaced resume image from storage:", storageErr);
+        }
+        setReplacedResumeImgUrl(null);
+      }
+      setOriginalResumeImgUrl(resumeProfile.image_url);
+
       setResumeSuccess("Resume profile updated successfully!");
       router.refresh();
       await fetchResumeDashboardData();
@@ -255,11 +331,20 @@ export default function AdminDashboard() {
         throw new Error(error.message);
       }
 
-      if (oldImageUrl && oldImageUrl.includes("/portfolio/")) {
-        const oldFileName = oldImageUrl.split("/portfolio/").pop();
-        if (oldFileName) {
-          const decodedFileName = decodeURIComponent(oldFileName);
-          await supabase.storage.from("portfolio").remove([decodedFileName]);
+      if (oldImageUrl) {
+        if (oldImageUrl === originalResumeImgUrl) {
+          setReplacedResumeImgUrl(oldImageUrl);
+        } else {
+          // intermediate upload, delete immediately
+          try {
+            const filePart = oldImageUrl.split("/portfolio/").pop();
+            if (filePart) {
+              const decoded = decodeURIComponent(filePart);
+              await supabase.storage.from("portfolio").remove([decoded]);
+            }
+          } catch (storageErr) {
+            console.error("Error removing intermediate resume image:", storageErr);
+          }
         }
       }
 
@@ -342,15 +427,30 @@ export default function AdminDashboard() {
     }
   };
 
+  const getNextOrderIndex = (type: "education" | "experience" | "certification") => {
+    const itemsOfType = resumeItems.filter(item => item.type === type);
+    if (itemsOfType.length === 0) {
+      return 1;
+    }
+    const maxOrderIndex = Math.max(...itemsOfType.map(item => Number(item.order_index || 0)));
+    return maxOrderIndex + 1;
+  };
+
   const handleOpenAddResumeItem = () => {
     setEditingResumeItem(null);
+    const defaultType = "education";
+    const nextOrder = getNextOrderIndex(defaultType);
     setResumeItemFormData({
-      type: "education",
-      title: "",
-      subtitle: "",
-      period: "",
-      description: "",
-      order_index: resumeItems.length + 1
+      type: defaultType,
+      title_id: "",
+      title_en: "",
+      subtitle_id: "",
+      subtitle_en: "",
+      period_id: "",
+      period_en: "",
+      description_id: "",
+      description_en: "",
+      order_index: nextOrder
     });
     setResumeItemError(null);
     setIsResumeItemModalOpen(true);
@@ -360,10 +460,14 @@ export default function AdminDashboard() {
     setEditingResumeItem(item);
     setResumeItemFormData({
       type: item.type,
-      title: item.title,
-      subtitle: item.subtitle || "",
-      period: item.period || "",
-      description: item.description || "",
+      title_id: item.title_id || "",
+      title_en: item.title_en || "",
+      subtitle_id: item.subtitle_id || "",
+      subtitle_en: item.subtitle_en || "",
+      period_id: item.period_id || "",
+      period_en: item.period_en || "",
+      description_id: item.description_id || "",
+      description_en: item.description_en || "",
       order_index: Number(item.order_index || 1)
     });
     setResumeItemError(null);
@@ -377,10 +481,10 @@ export default function AdminDashboard() {
 
     try {
       if (editingResumeItem) {
-        const res = await updateResumeItem(editingResumeItem.id, resumeItemFormData as any);
+        const res = await updateResumeItem(editingResumeItem.id, resumeItemFormData);
         if (!res.success) throw new Error(res.error);
       } else {
-        const res = await createResumeItem(resumeItemFormData as any);
+        const res = await createResumeItem(resumeItemFormData);
         if (!res.success) throw new Error(res.error);
       }
 
@@ -433,7 +537,8 @@ export default function AdminDashboard() {
       name: "",
       category: "Soft Skills",
       percentage: 50,
-      tooltip: ""
+      tooltip_id: "",
+      tooltip_en: ""
     });
     setSkillError(null);
     setIsSkillModalOpen(true);
@@ -441,11 +546,19 @@ export default function AdminDashboard() {
 
   const handleOpenEditSkill = (skill: any) => {
     setEditingSkill(skill);
+    let categoryToSet = skill.category;
+    if (categoryToSet === "UI/UX Design Skills" || categoryToSet === "Front-end Development") {
+      categoryToSet = "UI/UX & Frontend Development";
+    }
+    if (categoryToSet === "Data Analyst Tools") {
+      categoryToSet = "Framework & Other";
+    }
     setSkillFormData({
       name: skill.name,
-      category: skill.category,
+      category: categoryToSet,
       percentage: Number(skill.percentage),
-      tooltip: skill.tooltip || ""
+      tooltip_id: skill.tooltip_id || "",
+      tooltip_en: skill.tooltip_en || ""
     });
     setSkillError(null);
     setIsSkillModalOpen(true);
@@ -462,7 +575,8 @@ export default function AdminDashboard() {
           name: skillFormData.name,
           category: skillFormData.category,
           percentage: skillFormData.percentage,
-          tooltip: skillFormData.tooltip
+          tooltip_id: skillFormData.tooltip_id,
+          tooltip_en: skillFormData.tooltip_en
         });
         if (!res.success) throw new Error(res.error);
       } else {
@@ -470,7 +584,8 @@ export default function AdminDashboard() {
           name: skillFormData.name,
           category: skillFormData.category,
           percentage: skillFormData.percentage,
-          tooltip: skillFormData.tooltip
+          tooltip_id: skillFormData.tooltip_id,
+          tooltip_en: skillFormData.tooltip_en
         });
         if (!res.success) throw new Error(res.error);
       }
@@ -506,24 +621,33 @@ export default function AdminDashboard() {
     try {
       const res = await getProfile();
       if (res.success && res.data) {
+        setOriginalProfileImgUrl(res.data.about_image_url || null);
         setProfileForm({
-          hero_title: res.data.hero_title || "",
+          hero_title_id: res.data.hero_title_id || "",
+          hero_title_en: res.data.hero_title_en || "",
           hero_name: res.data.hero_name || "",
-          hero_description: res.data.hero_description || "",
-          typewriter_words_str: res.data.typewriter_words ? res.data.typewriter_words.join(", ") : "",
+          hero_description_id: res.data.hero_description_id || "",
+          hero_description_en: res.data.hero_description_en || "",
+          typewriter_words_str_id: res.data.typewriter_words_id ? res.data.typewriter_words_id.join(", ") : "",
+          typewriter_words_str_en: res.data.typewriter_words_en ? res.data.typewriter_words_en.join(", ") : "",
           github_url: res.data.github_url || "",
           linkedin_url: res.data.linkedin_url || "",
           instagram_url: res.data.instagram_url || "",
           about_image_url: res.data.about_image_url || "",
           about_name: res.data.about_name || "",
-          about_title: res.data.about_title || "",
+          about_title_id: res.data.about_title_id || "",
+          about_title_en: res.data.about_title_en || "",
           about_email: res.data.about_email || "",
           about_phone: res.data.about_phone || "",
-          about_location: res.data.about_location || "",
+          about_location_id: res.data.about_location_id || "",
+          about_location_en: res.data.about_location_en || "",
           about_maps_url: res.data.about_maps_url || "",
-          about_heading: res.data.about_heading || "",
-          about_bio_1: res.data.about_bio_1 || "",
-          about_bio_2: res.data.about_bio_2 || ""
+          about_heading_id: res.data.about_heading_id || "",
+          about_heading_en: res.data.about_heading_en || "",
+          about_bio_1_id: res.data.about_bio_1_id || "",
+          about_bio_1_en: res.data.about_bio_1_en || "",
+          about_bio_2_id: res.data.about_bio_2_id || "",
+          about_bio_2_en: res.data.about_bio_2_en || ""
         });
       }
     } catch (err: any) {
@@ -557,11 +681,20 @@ export default function AdminDashboard() {
         throw new Error(error.message);
       }
 
-      if (oldImageUrl && oldImageUrl.includes("/portfolio/")) {
-        const oldFileName = oldImageUrl.split("/portfolio/").pop();
-        if (oldFileName) {
-          const decodedFileName = decodeURIComponent(oldFileName);
-          await supabase.storage.from("portfolio").remove([decodedFileName]);
+      if (oldImageUrl) {
+        if (oldImageUrl === originalProfileImgUrl) {
+          setReplacedProfileImgUrl(oldImageUrl);
+        } else {
+          // intermediate upload, delete immediately
+          try {
+            const filePart = oldImageUrl.split("/portfolio/").pop();
+            if (filePart) {
+              const decoded = decodeURIComponent(filePart);
+              await supabase.storage.from("portfolio").remove([decoded]);
+            }
+          } catch (storageErr) {
+            console.error("Error removing intermediate profile image:", storageErr);
+          }
         }
       }
 
@@ -590,34 +723,62 @@ export default function AdminDashboard() {
     setProfileSuccess(null);
 
     try {
-      const wordsArray = profileForm.typewriter_words_str
+      const wordsArrayId = profileForm.typewriter_words_str_id
         .split(",")
-        .map((w) => w.trim())
-        .filter((w) => w !== "");
+        .map((w: string) => w.trim())
+        .filter((w: string) => w !== "");
+
+      const wordsArrayEn = profileForm.typewriter_words_str_en
+        .split(",")
+        .map((w: string) => w.trim())
+        .filter((w: string) => w !== "");
 
       const res = await updateProfile({
-        hero_title: profileForm.hero_title,
+        hero_title_id: profileForm.hero_title_id,
+        hero_title_en: profileForm.hero_title_en,
         hero_name: profileForm.hero_name,
-        hero_description: profileForm.hero_description,
-        typewriter_words: wordsArray,
+        hero_description_id: profileForm.hero_description_id,
+        hero_description_en: profileForm.hero_description_en,
+        typewriter_words_id: wordsArrayId,
+        typewriter_words_en: wordsArrayEn,
         github_url: profileForm.github_url,
         linkedin_url: profileForm.linkedin_url,
         instagram_url: profileForm.instagram_url,
         about_image_url: profileForm.about_image_url,
         about_name: profileForm.about_name,
-        about_title: profileForm.about_title,
+        about_title_id: profileForm.about_title_id,
+        about_title_en: profileForm.about_title_en,
         about_email: profileForm.about_email,
         about_phone: profileForm.about_phone,
-        about_location: profileForm.about_location,
+        about_location_id: profileForm.about_location_id,
+        about_location_en: profileForm.about_location_en,
         about_maps_url: profileForm.about_maps_url,
-        about_heading: profileForm.about_heading,
-        about_bio_1: profileForm.about_bio_1,
-        about_bio_2: profileForm.about_bio_2
+        about_heading_id: profileForm.about_heading_id,
+        about_heading_en: profileForm.about_heading_en,
+        about_bio_1_id: profileForm.about_bio_1_id,
+        about_bio_1_en: profileForm.about_bio_1_en,
+        about_bio_2_id: profileForm.about_bio_2_id,
+        about_bio_2_en: profileForm.about_bio_2_en
       });
 
       if (!res.success) {
         throw new Error(res.error);
       }
+
+      // --- DISCARD REPLACED PHYSICAL FILE FROM STORAGE ---
+      if (replacedProfileImgUrl) {
+        try {
+          const filePart = replacedProfileImgUrl.split("/portfolio/").pop();
+          if (filePart) {
+            const decoded = decodeURIComponent(filePart);
+            await supabase.storage.from("portfolio").remove([decoded]);
+          }
+        } catch (storageErr) {
+          console.error("Error deleting replaced profile image from storage:", storageErr);
+        }
+        setReplacedProfileImgUrl(null);
+      }
+      setOriginalProfileImgUrl(profileForm.about_image_url);
 
       setProfileSuccess("Profile updated successfully!");
       router.refresh();
@@ -648,12 +809,15 @@ export default function AdminDashboard() {
 
   const handleOpenAdd = () => {
     setEditingProject(null);
+    setReplacedProjectImgUrl(null);
     setFormData({
-      title: "",
+      title_id: "",
+      title_en: "",
       category: "Web Development",
       image_url: "",
       github_url: "",
-      details: ""
+      details_id: "",
+      details_en: ""
     });
     setError(null);
     setIsModalOpen(true);
@@ -661,12 +825,15 @@ export default function AdminDashboard() {
 
   const handleOpenEdit = (project: Project) => {
     setEditingProject(project);
+    setReplacedProjectImgUrl(null);
     setFormData({
-      title: project.title,
-      category: project.category,
-      image_url: project.image_url,
+      title_id: project.title_id || "",
+      title_en: project.title_en || "",
+      category: project.category || "Web Development",
+      image_url: project.image_url || "",
       github_url: project.github_url || "",
-      details: project.details || ""
+      details_id: project.details_id || "",
+      details_en: project.details_en || ""
     });
     setError(null);
     setIsModalOpen(true);
@@ -697,11 +864,21 @@ export default function AdminDashboard() {
         throw new Error(uploadError.message);
       }
 
-      if (oldImageUrl && oldImageUrl.includes("/portfolio/")) {
-        const oldFileName = oldImageUrl.split("/portfolio/").pop();
-        if (oldFileName) {
-          const decodedFileName = decodeURIComponent(oldFileName);
-          await supabase.storage.from("portfolio").remove([decodedFileName]);
+      if (oldImageUrl) {
+        const originalUrl = editingProject?.image_url;
+        if (oldImageUrl === originalUrl) {
+          setReplacedProjectImgUrl(oldImageUrl);
+        } else {
+          // intermediate upload, delete immediately
+          try {
+            const filePart = oldImageUrl.split("/portfolio/").pop();
+            if (filePart) {
+              const decoded = decodeURIComponent(filePart);
+              await supabase.storage.from("portfolio").remove([decoded]);
+            }
+          } catch (storageErr) {
+            console.error("Error removing intermediate project image:", storageErr);
+          }
         }
       }
 
@@ -729,21 +906,39 @@ export default function AdminDashboard() {
     try {
       if (editingProject) {
         const res = await updateProject(editingProject.id, {
-          title: formData.title,
+          title_id: formData.title_id,
+          title_en: formData.title_en,
           category: formData.category,
           image_url: formData.image_url,
           github_url: formData.github_url,
-          details: formData.details
+          details_id: formData.details_id,
+          details_en: formData.details_en
         });
 
         if (!res.success) throw new Error(res.error);
+
+        // --- DISCARD REPLACED PHYSICAL FILE FROM STORAGE ---
+        if (replacedProjectImgUrl) {
+          try {
+            const filePart = replacedProjectImgUrl.split("/portfolio/").pop();
+            if (filePart) {
+              const decoded = decodeURIComponent(filePart);
+              await supabase.storage.from("portfolio").remove([decoded]);
+            }
+          } catch (storageErr) {
+            console.error("Error deleting replaced project image from storage:", storageErr);
+          }
+          setReplacedProjectImgUrl(null);
+        }
       } else {
         const res = await createProject({
-          title: formData.title,
+          title_id: formData.title_id,
+          title_en: formData.title_en,
           category: formData.category,
           image_url: formData.image_url,
           github_url: formData.github_url,
-          details: formData.details
+          details_id: formData.details_id,
+          details_en: formData.details_en
         });
 
         if (!res.success) throw new Error(res.error);
@@ -833,16 +1028,6 @@ export default function AdminDashboard() {
         {/* Tab System - Sleek Capsule Pill Style */}
         <div className="flex gap-1.5 bg-white/[0.02] border border-white/5 p-1.5 rounded-2xl overflow-x-auto no-scrollbar">
           <button
-            onClick={() => setActiveTab("projects")}
-            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
-              activeTab === "projects"
-                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
-                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
-            }`}
-          >
-            Manage Projects
-          </button>
-          <button
             onClick={() => setActiveTab("hero")}
             className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
               activeTab === "hero"
@@ -871,6 +1056,16 @@ export default function AdminDashboard() {
             }`}
           >
             Manage Skills
+          </button>
+          <button
+            onClick={() => setActiveTab("projects")}
+            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap cursor-pointer ${
+              activeTab === "projects"
+                ? "bg-white/[0.08] text-white border border-white/10 shadow-sm"
+                : "text-[#ececec]/50 hover:text-[#ececec] hover:bg-white/[0.02] border border-transparent"
+            }`}
+          >
+            Manage Projects
           </button>
           <button
             onClick={() => setActiveTab("resume")}
@@ -902,12 +1097,33 @@ export default function AdminDashboard() {
               <div className="text-base font-medium text-[#ececec]/80">
                 Total Projects: <span className="bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded-lg text-sm font-bold text-white ml-1.5">{projects.length}</span>
               </div>
-              <button
-                onClick={handleOpenAdd}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold shadow-lg shadow-[#ececec]/5 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
-              >
-                <BsPlusLg className="text-xs" /> Add New Project
-              </button>
+
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                {/* Filter pill capsule/button group */}
+                <div className="flex flex-wrap bg-white/[0.02] border border-white/5 p-1 rounded-xl gap-0.5">
+                  {['all', 'Web Development', 'Mobile Development', 'Data Analyst', 'Etc'].map((categoryOption) => (
+                    <button
+                      key={categoryOption}
+                      type="button"
+                      onClick={() => setSelectedProjectFilter(categoryOption)}
+                      className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer ${
+                        selectedProjectFilter === categoryOption
+                          ? "bg-white/[0.08] text-white border border-white/10"
+                          : "text-[#ececec]/50 hover:text-white border border-transparent"
+                      }`}
+                    >
+                      {categoryOption === 'all' ? 'All' : categoryOption}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleOpenAdd}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold shadow-lg shadow-[#ececec]/5 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
+                >
+                  <BsPlusLg className="text-xs" /> Add New Project
+                </button>
+              </div>
             </div>
 
             {/* Projects Listing */}
@@ -941,13 +1157,13 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.04]">
-                      {projects.map((project) => (
+                      {filteredProjects.map((project) => (
                         <tr key={project.id} className="hover:bg-white/[0.01] transition-colors group">
                           <td className="px-6 py-4">
                             <div className="w-14 h-10 rounded-lg overflow-hidden border border-white/10 bg-black/40">
                               <img
                                 src={project.image_url || "/assets/img/favicon.png"}
-                                alt={project.title}
+                                alt={project.title_id || project.title_en}
                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).src = "https://placehold.co/100x100/png";
@@ -956,7 +1172,7 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-6 py-4 font-medium text-white truncate max-w-[200px]">
-                            {project.title}
+                            {project.title_id || project.title_en}
                           </td>
                           <td className="px-6 py-4 text-xs">
                             <span className="px-2.5 py-1 bg-white/[0.04] rounded-md border border-white/5 text-[#ececec]/80">
@@ -994,7 +1210,7 @@ export default function AdminDashboard() {
                                 <BsPencilSquare className="text-sm" />
                               </button>
                               <button
-                                onClick={() => handleDelete(project.id, project.title)}
+                                onClick={() => handleDelete(project.id, project.title_id || project.title_en)}
                                 className="p-2 bg-red-500/[0.02] border border-red-500/10 hover:border-red-500/40 text-red-400/80 hover:text-red-400 rounded-xl transition-all duration-300 cursor-pointer hover:scale-105"
                                 title="Delete Item"
                               >
@@ -1030,13 +1246,25 @@ export default function AdminDashboard() {
             <form onSubmit={handleSaveProfile} className="space-y-6">
               <div className="space-y-5">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-[#ececec]/40 border-b border-white/5 pb-2">Hero Copywriting</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Greeting Title</label>
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Greeting Title (ID)</label>
                     <input
                       type="text"
-                      value={profileForm.hero_title}
-                      onChange={(e) => setProfileForm({ ...profileForm, hero_title: e.target.value })}
+                      value={profileForm.hero_title_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, hero_title_id: e.target.value })}
+                      placeholder="e.g. Halo Dunia"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Greeting Title (EN)</label>
+                    <input
+                      type="text"
+                      value={profileForm.hero_title_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, hero_title_en: e.target.value })}
                       placeholder="e.g. Hello World"
                       className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
@@ -1056,29 +1284,54 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Typewriter Words (separated by comma)</label>
-                  <input
-                    type="text"
-                    value={profileForm.typewriter_words_str}
-                    onChange={(e) => setProfileForm({ ...profileForm, typewriter_words_str: e.target.value })}
-                    placeholder="e.g. Software Engineer, UI Designer, Analyst"
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
-                    required
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Typewriter Words ID (separated by comma)</label>
+                    <input
+                      type="text"
+                      value={profileForm.typewriter_words_str_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, typewriter_words_str_id: e.target.value })}
+                      placeholder="e.g. Rekayasa Perangkat Lunak, Desainer UI, Analis"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
                     />
-                  <p className="text-[11px] text-[#ececec]/40 pl-0.5">Provide tags comma-separated to render continuous animation lines on header script.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Typewriter Words EN (separated by comma)</label>
+                    <input
+                      type="text"
+                      value={profileForm.typewriter_words_str_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, typewriter_words_str_en: e.target.value })}
+                      placeholder="e.g. Software Engineer, UI Designer, Analyst"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Subheading Narrative</label>
-                  <textarea
-                    value={profileForm.hero_description}
-                    onChange={(e) => setProfileForm({ ...profileForm, hero_description: e.target.value })}
-                    placeholder="Brief intro narrative summary..."
-                    rows={4}
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
-                    required
-                  ></textarea>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Subheading Narrative (ID)</label>
+                    <textarea
+                      value={profileForm.hero_description_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, hero_description_id: e.target.value })}
+                      placeholder="Ringkasan pengenalan singkat..."
+                      rows={4}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Subheading Narrative (EN)</label>
+                    <textarea
+                      value={profileForm.hero_description_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, hero_description_en: e.target.value })}
+                      placeholder="Brief intro narrative summary..."
+                      rows={4}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
                 </div>
               </div>
 
@@ -1178,7 +1431,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Biographic Fullname</label>
                     <input
@@ -1192,11 +1445,23 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Professional Role Title</label>
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Professional Role Title (ID)</label>
                     <input
                       type="text"
-                      value={profileForm.about_title}
-                      onChange={(e) => setProfileForm({ ...profileForm, about_title: e.target.value })}
+                      value={profileForm.about_title_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_title_id: e.target.value })}
+                      placeholder="e.g. Insinyur Sistem Utama"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Professional Role Title (EN)</label>
+                    <input
+                      type="text"
+                      value={profileForm.about_title_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_title_en: e.target.value })}
                       placeholder="e.g. Lead Systems Engineer"
                       className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
@@ -1204,7 +1469,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Communication Email</label>
                     <input
@@ -1228,11 +1493,22 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Localization Location</label>
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Localization Location (ID)</label>
                     <input
                       type="text"
-                      value={profileForm.about_location}
-                      onChange={(e) => setProfileForm({ ...profileForm, about_location: e.target.value })}
+                      value={profileForm.about_location_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_location_id: e.target.value })}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Localization Location (EN)</label>
+                    <input
+                      type="text"
+                      value={profileForm.about_location_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_location_en: e.target.value })}
                       className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
                       required
                     />
@@ -1250,37 +1526,73 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Section Punchline Heading</label>
-                  <input
-                    type="text"
-                    value={profileForm.about_heading}
-                    onChange={(e) => setProfileForm({ ...profileForm, about_heading: e.target.value })}
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
-                    required
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Section Punchline Heading (ID)</label>
+                    <input
+                      type="text"
+                      value={profileForm.about_heading_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_heading_id: e.target.value })}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Section Punchline Heading (EN)</label>
+                    <input
+                      type="text"
+                      value={profileForm.about_heading_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_heading_en: e.target.value })}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                      required
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 1</label>
-                  <textarea
-                    value={profileForm.about_bio_1}
-                    onChange={(e) => setProfileForm({ ...profileForm, about_bio_1: e.target.value })}
-                    rows={4}
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
-                    required
-                  ></textarea>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 1 (ID)</label>
+                    <textarea
+                      value={profileForm.about_bio_1_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_bio_1_id: e.target.value })}
+                      rows={4}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 1 (EN)</label>
+                    <textarea
+                      value={profileForm.about_bio_1_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_bio_1_en: e.target.value })}
+                      rows={4}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 2</label>
-                  <textarea
-                    value={profileForm.about_bio_2}
-                    onChange={(e) => setProfileForm({ ...profileForm, about_bio_2: e.target.value })}
-                    rows={4}
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
-                    required
-                  ></textarea>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 2 (ID)</label>
+                    <textarea
+                      value={profileForm.about_bio_2_id}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_bio_2_id: e.target.value })}
+                      rows={4}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Bio Narrative Block 2 (EN)</label>
+                    <textarea
+                      value={profileForm.about_bio_2_en}
+                      onChange={(e) => setProfileForm({ ...profileForm, about_bio_2_en: e.target.value })}
+                      rows={4}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
                 </div>
               </div>
 
@@ -1303,14 +1615,35 @@ export default function AdminDashboard() {
             {/* Action Bar */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-6 rounded-3xl shadow-xl">
               <div className="text-base font-medium text-[#ececec]/80">
-                Total Skills Stack: <span className="bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded-lg text-sm font-bold text-white ml-1.5">{skills.length}</span>
+                Total Skills Stack: <span className="bg-white/[0.06] border border-white/10 px-2.5 py-1 rounded-lg text-sm font-bold text-white ml-1.5">{normalizedSkills.length}</span>
               </div>
-              <button
-                onClick={handleOpenAddSkill}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold shadow-lg shadow-[#ececec]/5 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
-              >
-                <BsPlusLg className="text-xs" /> Add New Skill Descriptor
-              </button>
+              
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                {/* Filter pill capsule/button group */}
+                <div className="flex flex-wrap bg-white/[0.02] border border-white/5 p-1 rounded-xl gap-0.5">
+                  {['all', 'Soft Skills', 'Back-end Development', 'UI/UX & Frontend Development', 'Data Analytics & Science'].map((categoryOption) => (
+                    <button
+                      key={categoryOption}
+                      type="button"
+                      onClick={() => setSelectedSkillFilter(categoryOption)}
+                      className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer ${
+                        selectedSkillFilter === categoryOption
+                          ? "bg-white/[0.08] text-white border border-white/10"
+                          : "text-[#ececec]/50 hover:text-white border border-transparent"
+                      }`}
+                    >
+                      {categoryOption === 'all' ? 'All' : categoryOption}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleOpenAddSkill}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-sm font-bold shadow-lg shadow-[#ececec]/5 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
+                >
+                  <BsPlusLg className="text-xs" /> Add New Skill Descriptor
+                </button>
+              </div>
             </div>
 
             {/* Skills Listing */}
@@ -1319,7 +1652,7 @@ export default function AdminDashboard() {
                 <div className="w-10 h-10 border-2 border-white/40 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-sm text-[#ececec]/60">Fetching framework metric stacks...</p>
               </div>
-            ) : skills.length === 0 ? (
+            ) : normalizedSkills.length === 0 ? (
               <div className="bg-gradient-to-b from-[#242424] to-[#1c1c1c] border border-white/[0.06] p-16 rounded-[2rem] text-center shadow-xl space-y-4">
                 <BsFolderSymlink className="text-4xl mx-auto text-white/20" />
                 <p className="text-[#ececec]/60 text-base">No functional metrics initialized.</p>
@@ -1339,12 +1672,12 @@ export default function AdminDashboard() {
                         <th className="px-6 py-4.5">Skill Identity</th>
                         <th className="px-6 py-4.5">Classification Tag</th>
                         <th className="px-6 py-4.5">Performance Range</th>
-                        <th className="px-6 py-4.5">Tooltip Metadata</th>
+                        <th className="px-6 py-4.5">Tooltip Metadata (ID)</th>
                         <th className="px-6 py-4.5 text-center">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.04]">
-                      {skills.map((skill) => (
+                      {filteredSkills.map((skill) => (
                         <tr key={skill.id} className="hover:bg-white/[0.01] transition-colors">
                           <td className="px-6 py-4 font-semibold text-white">{skill.name}</td>
                           <td className="px-6 py-4 text-xs">
@@ -1360,8 +1693,8 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-xs text-[#ececec]/50 max-w-xs truncate" title={skill.tooltip}>
-                            {skill.tooltip || <span className="text-white/20 italic">No description</span>}
+                          <td className="px-6 py-4 text-xs text-[#ececec]/50 max-w-xs truncate" title={skill.tooltip_id}>
+                            {skill.tooltip_id || <span className="text-white/20 italic">No description</span>}
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex justify-center items-center gap-2">
@@ -1433,17 +1766,30 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* Summary */}
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Resume Summary Paragraph</label>
-                  <textarea
-                    value={resumeProfile.summary}
-                    onChange={(e) => setResumeProfile({ ...resumeProfile, summary: e.target.value })}
-                    placeholder="Brief resume objective synthesis statement..."
-                    rows={3}
-                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
-                    required
-                  ></textarea>
+                {/* Summary (ID & EN) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Resume Summary Paragraph (ID)</label>
+                    <textarea
+                      value={resumeProfile.summary_id}
+                      onChange={(e) => setResumeProfile({ ...resumeProfile, summary_id: e.target.value })}
+                      placeholder="Ringkasan resume dalam Bahasa Indonesia..."
+                      rows={3}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Resume Summary Paragraph (EN)</label>
+                    <textarea
+                      value={resumeProfile.summary_en}
+                      onChange={(e) => setResumeProfile({ ...resumeProfile, summary_en: e.target.value })}
+                      placeholder="Brief resume objective synthesis statement in English..."
+                      rows={3}
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300 resize-none"
+                      required
+                    ></textarea>
+                  </div>
                 </div>
 
                 {/* Contacts grid */}
@@ -1561,19 +1907,40 @@ export default function AdminDashboard() {
                   <h2 className="text-lg font-bold text-white">Chronological Milestones</h2>
                   <p className="text-xs text-[#ececec]/60">Manage educational histories, corporate experiences, and credential pathways.</p>
                 </div>
-                <button
-                  onClick={handleOpenAddResumeItem}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-xs font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto cursor-pointer"
-                >
-                  <BsPlusLg className="text-[10px]" /> Append Milestone Block
-                </button>
+                
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                  {/* Filter pill capsule/button group */}
+                  <div className="flex bg-white/[0.02] border border-white/5 p-1 rounded-xl">
+                    {(['all', 'education', 'experience', 'certification'] as const).map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setSelectedResumeType(type)}
+                        className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all capitalize cursor-pointer ${
+                          selectedResumeType === type
+                            ? "bg-white/[0.08] text-white border border-white/10"
+                            : "text-[#ececec]/50 hover:text-white"
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handleOpenAddResumeItem}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-xl transition-all duration-300 text-xs font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  >
+                    <BsPlusLg className="text-[10px]" /> Append Milestone Block
+                  </button>
+                </div>
               </div>
 
               {resumeLoading ? (
                 <div className="text-center py-6">
                   <div className="w-6 h-6 border-2 border-white/30 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 </div>
-              ) : resumeItems.length === 0 ? (
+              ) : filteredResumeItems.length === 0 ? (
                 <p className="text-xs text-[#ececec]/40 text-center py-4 italic">No timeline arrays configured.</p>
               ) : (
                 <div className="overflow-x-auto rounded-xl border border-white/5 bg-white/[0.01]">
@@ -1581,28 +1948,28 @@ export default function AdminDashboard() {
                     <thead>
                       <tr className="bg-white/[0.02] border-b border-white/5 text-xs font-semibold text-[#ececec]/50">
                         <th className="px-6 py-3">Context Classification</th>
-                        <th className="px-6 py-3">Block Title</th>
-                        <th className="px-6 py-3">Host Entity / Instansi</th>
-                        <th className="px-6 py-3">Time Period</th>
+                        <th className="px-6 py-3">Descriptor Title (ID)</th>
+                        <th className="px-6 py-3">Host Enterprise / Organization (ID)</th>
+                        <th className="px-6 py-3">Temporal Range Period (ID)</th>
                         <th className="px-6 py-3">Order Index</th>
                         <th className="px-6 py-3 text-center">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.04] text-xs">
-                      {resumeItems.map((item) => (
+                      {filteredResumeItems.map((item) => (
                         <tr key={item.id} className="hover:bg-white/[0.01]">
                           <td className="px-6 py-3">
                             <span className="px-2 py-0.5 bg-white/[0.04] border border-white/5 rounded text-[10px] uppercase font-medium text-[#ececec]/80">
                               {item.type}
                             </span>
                           </td>
-                          <td className="px-6 py-3 font-semibold text-white truncate max-w-[150px]" title={item.title}>
-                            {item.title}
+                          <td className="px-6 py-3 font-semibold text-white truncate max-w-[150px]" title={item.title_id}>
+                            {item.title_id}
                           </td>
-                          <td className="px-6 py-3 text-[#ececec]/70 truncate max-w-[150px]" title={item.subtitle}>
-                            {item.subtitle || <span className="text-white/10 italic">-</span>}
+                          <td className="px-6 py-3 text-[#ececec]/70 truncate max-w-[150px]" title={item.subtitle_id}>
+                            {item.subtitle_id || <span className="text-white/10 italic">-</span>}
                           </td>
-                          <td className="px-6 py-3 text-[#ececec]/60">{item.period || <span className="text-white/10 italic">-</span>}</td>
+                          <td className="px-6 py-3 text-[#ececec]/60">{item.period_id || <span className="text-white/10 italic">-</span>}</td>
                           <td className="px-6 py-3 text-white/50">{item.order_index}</td>
                           <td className="px-6 py-3">
                             <div className="flex justify-center items-center gap-1.5">
@@ -1613,7 +1980,7 @@ export default function AdminDashboard() {
                                 <BsPencilSquare className="text-[11px]" />
                               </button>
                               <button
-                                onClick={() => handleDeleteResumeItem(item.id, item.title)}
+                                onClick={() => handleDeleteResumeItem(item.id, item.title_id)}
                                 className="p-2 bg-red-500/[0.02] border border-red-500/10 hover:border-red-500/40 text-red-400/80 hover:text-red-400 rounded-lg transition-all cursor-pointer"
                               >
                                 <BsTrash className="text-[11px]" />
@@ -1798,7 +2165,15 @@ export default function AdminDashboard() {
                   <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Classification Type</label>
                   <select
                     value={resumeItemFormData.type}
-                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, type: e.target.value as any })}
+                    onChange={(e) => {
+                      const newType = e.target.value as "education" | "experience" | "certification";
+                      const nextOrder = !editingResumeItem ? getNextOrderIndex(newType) : resumeItemFormData.order_index;
+                      setResumeItemFormData({
+                        ...resumeItemFormData,
+                        type: newType,
+                        order_index: nextOrder
+                      });
+                    }}
                     className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none cursor-pointer"
                   >
                     <option value="education">Education</option>
@@ -1819,49 +2194,99 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Descriptor Title</label>
-                <input
-                  type="text"
-                  value={resumeItemFormData.title}
-                  onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, title: e.target.value })}
-                  placeholder="e.g. Master of Engineering"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
-                  required
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Descriptor Title (ID)</label>
+                  <input
+                    type="text"
+                    value={resumeItemFormData.title_id}
+                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, title_id: e.target.value })}
+                    placeholder="e.g. Magister Teknik"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Descriptor Title (EN)</label>
+                  <input
+                    type="text"
+                    value={resumeItemFormData.title_en}
+                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, title_en: e.target.value })}
+                    placeholder="e.g. Master of Engineering"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
+                    required
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Host Enterprise / Organization</label>
-                <input
-                  type="text"
-                  value={resumeItemFormData.subtitle}
-                  onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, subtitle: e.target.value })}
-                  placeholder="e.g. Stanford University"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Host Enterprise / Organization (ID)</label>
+                  <input
+                    type="text"
+                    value={resumeItemFormData.subtitle_id}
+                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, subtitle_id: e.target.value })}
+                    placeholder="e.g. Universitas Stanford"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Host Enterprise / Organization (EN)</label>
+                  <input
+                    type="text"
+                    value={resumeItemFormData.subtitle_en}
+                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, subtitle_en: e.target.value })}
+                    placeholder="e.g. Stanford University"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Temporal Range Period</label>
-                <input
-                  type="text"
-                  value={resumeItemFormData.period}
-                  onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, period: e.target.value })}
-                  placeholder="e.g. 2024 - Present"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Temporal Range Period (ID)</label>
+                  <input
+                    type="text"
+                    value={resumeItemFormData.period_id}
+                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, period_id: e.target.value })}
+                    placeholder="e.g. 2024 - Sekarang"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Temporal Range Period (EN)</label>
+                  <input
+                    type="text"
+                    value={resumeItemFormData.period_en}
+                    onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, period_en: e.target.value })}
+                    placeholder="e.g. 2024 - Present"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">
-                  Analytical Narrative Summary {resumeItemFormData.type === "experience" && "(\\n for linebreaks)"}
+                  Analytical Narrative Summary (ID) {resumeItemFormData.type === "experience" && "(\\n for linebreaks)"}
                 </label>
                 <textarea
-                  value={resumeItemFormData.description}
-                  onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, description: e.target.value })}
+                  value={resumeItemFormData.description_id}
+                  onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, description_id: e.target.value })}
+                  placeholder="Ringkasan peran operasional inti..."
+                  rows={3}
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none resize-none"
+                ></textarea>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">
+                  Analytical Narrative Summary (EN) {resumeItemFormData.type === "experience" && "(\\n for linebreaks)"}
+                </label>
+                <textarea
+                  value={resumeItemFormData.description_en}
+                  onChange={(e) => setResumeItemFormData({ ...resumeItemFormData, description_en: e.target.value })}
                   placeholder="Core operational roles summaries..."
-                  rows={4}
+                  rows={3}
                   className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-white/30 outline-none resize-none"
                 ></textarea>
               </div>
@@ -1927,7 +2352,7 @@ export default function AdminDashboard() {
                   <option value="Soft Skills">Soft Skills</option>
                   <option value="Back-end Development">Back-end Development</option>
                   <option value="UI/UX & Frontend Development">UI/UX & Frontend Development</option>
-                  <option value="Data Analyst Tools">Data Analyst Tools</option>
+                  <option value="Framework & Other">Framework & Other</option>
                 </select>
               </div>
 
@@ -1956,15 +2381,27 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Metadata Tooltip Strings</label>
-                <textarea
-                  value={skillFormData.tooltip}
-                  onChange={(e) => setSkillFormData({ ...skillFormData, tooltip: e.target.value })}
-                  placeholder="Context explicit micro copy strings on hover overlays..."
-                  rows={3}
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none resize-none"
-                ></textarea>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Tooltip Metadata (ID)</label>
+                  <textarea
+                    value={skillFormData.tooltip_id}
+                    onChange={(e) => setSkillFormData({ ...skillFormData, tooltip_id: e.target.value })}
+                    placeholder="Deskripsi singkat dalam Bahasa Indonesia..."
+                    rows={2}
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none resize-none"
+                  ></textarea>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Tooltip Metadata (EN)</label>
+                  <textarea
+                    value={skillFormData.tooltip_en}
+                    onChange={(e) => setSkillFormData({ ...skillFormData, tooltip_en: e.target.value })}
+                    placeholder="Brief description in English..."
+                    rows={2}
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none resize-none"
+                  ></textarea>
+                </div>
               </div>
 
               <div className="flex gap-2.5 justify-end pt-4 border-t border-white/5">
@@ -2006,16 +2443,29 @@ export default function AdminDashboard() {
             )}
 
             <form onSubmit={handleSave} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Project Signature Title</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Enterprise Neural Dashboard"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
-                  required
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Project Title (ID)</label>
+                  <input
+                    type="text"
+                    value={formData.title_id}
+                    onChange={(e) => setFormData({ ...formData, title_id: e.target.value })}
+                    placeholder="e.g. Dasbor Saraf Perusahaan"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Project Title (EN)</label>
+                  <input
+                    type="text"
+                    value={formData.title_en}
+                    onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
+                    placeholder="e.g. Enterprise Neural Dashboard"
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 focus:ring-4 focus:ring-white/[0.02] outline-none transition-all duration-300"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -2074,15 +2524,27 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Technical Features Stack Narrative</label>
-                <textarea
-                  value={formData.details}
-                  onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                  placeholder="Elaborate functional design requirements, dependencies, architecture parameters..."
-                  rows={4}
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none transition-all duration-300 resize-none"
-                ></textarea>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Project Details (ID)</label>
+                  <textarea
+                    value={formData.details_id}
+                    onChange={(e) => setFormData({ ...formData, details_id: e.target.value })}
+                    placeholder="Detail fitur teknis dalam Bahasa Indonesia..."
+                    rows={3}
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none transition-all duration-300 resize-none"
+                  ></textarea>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#ececec]/70 pl-0.5">Project Details (EN)</label>
+                  <textarea
+                    value={formData.details_en}
+                    onChange={(e) => setFormData({ ...formData, details_en: e.target.value })}
+                    placeholder="Technical features details in English..."
+                    rows={3}
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:bg-white/[0.04] focus:border-white/30 outline-none transition-all duration-300 resize-none"
+                  ></textarea>
+                </div>
               </div>
 
               <div className="flex gap-2.5 justify-end pt-4 border-t border-white/5">

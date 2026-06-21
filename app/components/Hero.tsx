@@ -1,15 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { BsGithub, BsLinkedin, BsInstagram, BsArrowRight } from "react-icons/bs";
 import ScrollReveal from "./ScrollReveal";
 
 interface Profile {
   id: number;
-  hero_title: string;
+  hero_title_id: string;
+  hero_title_en: string;
   hero_name: string;
-  hero_description: string;
-  typewriter_words: string[];
+  hero_description_id: string;
+  hero_description_en: string;
+  typewriter_words_id: string[];
+  typewriter_words_en: string[];
   github_url: string;
   linkedin_url: string;
   instagram_url: string;
@@ -72,11 +76,13 @@ interface HeroProps {
 }
 
 export default function Hero({ profile }: HeroProps) {
+  const locale = useLocale();
+  const isEn = locale === "en";
   const data = {
-    hero_title: profile?.hero_title || "Creative Developer",
+    hero_title: (isEn ? profile?.hero_title_en : profile?.hero_title_id) || "Creative Developer",
     hero_name: profile?.hero_name || "Ernanda Revalino",
-    hero_description: profile?.hero_description || "Passionate about designing and constructing state-of-the-art web applications that bridge elegance, usability, and modern high performance.",
-    typewriter_words: profile?.typewriter_words || ["Frontend Developer", "Data Analyst", "React Enthusiast"],
+    hero_description: (isEn ? profile?.hero_description_en : profile?.hero_description_id) || "Passionate about designing and constructing state-of-the-art web applications that bridge elegance, usability, and modern high performance.",
+    typewriter_words: (isEn ? profile?.typewriter_words_en : profile?.typewriter_words_id) || ["Frontend Developer", "Data Analyst", "React Enthusiast"],
     github_url: profile?.github_url || "https://github.com/ernandarevalino",
     linkedin_url: profile?.linkedin_url || "https://www.linkedin.com/in/ernanda-revalino-493751246",
     instagram_url: profile?.instagram_url || "https://instagram.com",
@@ -104,8 +110,8 @@ export default function Hero({ profile }: HeroProps) {
               <div className="space-y-8 max-w-2xl mx-auto lg:mx-0">
 
                 {/* Massive Typography Headline */}
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black font-ubuntu leading-[1.05] tracking-tight text-white">
-                  My Name Is <br />
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-ubuntu leading-[1.1] tracking-tight text-white">
+                  My Name<br />
                   <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-[#ececec] to-white/70">
                     {data.hero_name}
                   </span>
@@ -113,7 +119,7 @@ export default function Hero({ profile }: HeroProps) {
                 
                 {/* Typing Effect Container */}
                 <p className="text-lg md:text-2xl font-['Nunito'] text-[#ececec]/80">
-                  I'm a <Typewriter words={data.typewriter_words} />
+                  I'm <Typewriter words={data.typewriter_words} />
                 </p>
 
                 {/* Description */}

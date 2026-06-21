@@ -14,6 +14,16 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
+  // Data kontak untuk link dinamis
+  const contactInfo = {
+    location: "Serpong, Tangerang Selatan",
+    mapsLink: "https://maps.google.com/?q=Serpong,+Tangerang+Selatan", // Sesuaikan link spesifik jika ada
+    phone: "+62 857-1020-9622",
+    whatsappLink: "https://wa.me/6285710209622",
+    email: "ernandarevalino@gmail.com",
+    emailLink: "mailto:ernandarevalino@gmail.com"
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -70,46 +80,59 @@ export default function Contact() {
             <ScrollReveal delay={150}>
               <div className="bg-gradient-to-br from-[#232323] to-[#202020] p-8 md:p-10 rounded-[2.5rem] border border-white/5 hover:border-white/10 shadow-2xl space-y-8 h-full transition-all duration-300">
                 <div>
-                  <h3 className="text-xl font-bold font-ubuntu mb-3 text-white tracking-wide uppercase border-b border-white/5 pb-2">Contact Info</h3>
+                  <h3 className="text-xs font-bold font-ubuntu mb-3 text-white/30 tracking-wider uppercase border-b border-white/5 pb-3">Contact Info</h3>
                   <p className="text-sm md:text-base text-[#ececec]/60 leading-relaxed font-['Nunito']">
                     I'm responsive and happy to discuss new project initiatives, data integration, full stack architectures, or analytics consultancy.
                   </p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   
-                  {/* Location Tile */}
-                  <div className="flex items-center gap-5 group/tile">
-                    <div className="w-12 h-12 bg-white/5 border border-white/5 text-[#ececec] rounded-2xl flex items-center justify-center shrink-0 group-hover/tile:bg-[#ececec] group-hover/tile:text-[#1f1f1f] group-hover/tile:scale-105 transition-all duration-300 shadow-md">
+                  {/* Location Tile (Link) */}
+                  <a 
+                    href={contactInfo.mapsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-5 group/tile p-2 -mx-2 rounded-2xl hover:bg-white/[0.02] transition-all duration-300 w-full text-left"
+                  >
+                    <div className="w-12 h-12 bg-white/[0.02] border border-white/5 text-white/50 rounded-2xl flex items-center justify-center shrink-0 group-hover/tile:bg-white/[0.08] group-hover/tile:border-white/20 group-hover/tile:text-white transition-all duration-300">
                       <BsGeoAlt className="text-lg" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold font-ubuntu text-white mb-0.5 tracking-wider uppercase">Location</h4>
-                      <p className="text-sm text-[#ececec]/60 font-medium font-['Nunito']">Serpong, Tangerang Selatan</p>
+                      <h4 className="text-xs font-bold font-ubuntu text-white/40 mb-0.5 tracking-wider uppercase group-hover/tile:text-white/60 transition-colors duration-300">Location</h4>
+                      <p className="text-sm text-white/70 group-hover/tile:text-white font-medium font-['Nunito'] transition-colors duration-300">{contactInfo.location}</p>
                     </div>
-                  </div>
+                  </a>
 
-                  {/* Phone Tile */}
-                  <div className="flex items-center gap-5 group/tile">
-                    <div className="w-12 h-12 bg-white/5 border border-white/5 text-[#ececec] rounded-2xl flex items-center justify-center shrink-0 group-hover/tile:bg-[#ececec] group-hover/tile:text-[#1f1f1f] group-hover/tile:scale-105 transition-all duration-300 shadow-md">
+                  {/* Phone/WhatsApp Tile (Link) */}
+                  <a 
+                    href={contactInfo.whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-5 group/tile p-2 -mx-2 rounded-2xl hover:bg-white/[0.02] transition-all duration-300 w-full text-left"
+                  >
+                    <div className="w-12 h-12 bg-white/[0.02] border border-white/5 text-white/50 rounded-2xl flex items-center justify-center shrink-0 group-hover/tile:bg-white/[0.08] group-hover/tile:border-white/20 group-hover/tile:text-white transition-all duration-300">
                       <BsTelephone className="text-lg" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold font-ubuntu text-white mb-0.5 tracking-wider uppercase">Phone Number</h4>
-                      <p className="text-sm text-[#ececec]/60 font-medium font-['Nunito']">+62 857-1020-9622</p>
+                      <h4 className="text-xs font-bold font-ubuntu text-white/40 mb-0.5 tracking-wider uppercase group-hover/tile:text-white/60 transition-colors duration-300">Phone Number</h4>
+                      <p className="text-sm text-white/70 group-hover/tile:text-white font-medium font-['Nunito'] transition-colors duration-300">{contactInfo.phone}</p>
                     </div>
-                  </div>
+                  </a>
 
-                  {/* Email Tile */}
-                  <div className="flex items-center gap-5 group/tile">
-                    <div className="w-12 h-12 bg-white/5 border border-white/5 text-[#ececec] rounded-2xl flex items-center justify-center shrink-0 group-hover/tile:bg-[#ececec] group-hover/tile:text-[#1f1f1f] group-hover/tile:scale-105 transition-all duration-300 shadow-md">
+                  {/* Email Tile (Link) */}
+                  <a 
+                    href={contactInfo.emailLink}
+                    className="flex items-center gap-5 group/tile p-2 -mx-2 rounded-2xl hover:bg-white/[0.02] transition-all duration-300 w-full text-left"
+                  >
+                    <div className="w-12 h-12 bg-white/[0.02] border border-white/5 text-white/50 rounded-2xl flex items-center justify-center shrink-0 group-hover/tile:bg-white/[0.08] group-hover/tile:border-white/20 group-hover/tile:text-white transition-all duration-300">
                       <BsEnvelope className="text-lg" />
                     </div>
-                    <div>
-                      <h4 className="text-sm font-bold font-ubuntu text-white mb-0.5 tracking-wider uppercase">Email Address</h4>
-                      <p className="text-sm text-[#ececec]/60 font-medium font-['Nunito'] truncate">ernandarevalino@gmail.com</p>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs font-bold font-ubuntu text-white/40 mb-0.5 tracking-wider uppercase group-hover/tile:text-white/60 transition-colors duration-300">Email Address</h4>
+                      <p className="text-sm text-white/70 group-hover/tile:text-white font-medium font-['Nunito'] truncate transition-colors duration-300">{contactInfo.email}</p>
                     </div>
-                  </div>
+                  </a>
 
                 </div>
               </div>
@@ -121,7 +144,7 @@ export default function Contact() {
             <ScrollReveal delay={300}>
               <div className="bg-gradient-to-br from-[#232323] to-[#202020] p-8 md:p-10 rounded-[2.5rem] border border-white/5 hover:border-white/10 shadow-2xl space-y-8 transition-all duration-300">
                 <div>
-                  <h3 className="text-xl font-bold font-ubuntu mb-2 text-white tracking-wide uppercase border-b border-white/5 pb-2">Get In Touch</h3>
+                  <h3 className="text-xs font-bold font-ubuntu mb-2 text-white/30 tracking-wider uppercase border-b border-white/5 pb-3">Get In Touch</h3>
                   <p className="text-sm md:text-base text-[#ececec]/60 font-['Nunito']">Leave a brief note and I will get back to you within 24 hours.</p>
                 </div>
 
@@ -175,7 +198,7 @@ export default function Contact() {
                     ></textarea>
                   </div>
 
-                  {/* Submit status response with high-fidelity elements */}
+                  {/* Submit status response */}
                   <div className="pt-2 text-center space-y-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     
                     {/* Status labels */}
@@ -202,7 +225,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={status === "loading"}
-                      className="w-full md:w-auto px-8 py-4 bg-[#ececec] text-[#1f1f1f] font-bold rounded-full hover:bg-white hover:scale-105 active:scale-95 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-white/5"
+                      className="w-full md:w-auto px-8 py-4 bg-[#ececec] text-[#1f1f1f] font-bold rounded-full hover:bg-white active:scale-98 transition-all duration-300 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-white/5"
                     >
                       <span>Send Message</span>
                       <BsSend className="text-xs" />

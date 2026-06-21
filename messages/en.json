@@ -1,0 +1,58 @@
+{
+  "Header": {
+    "home": "Home",
+    "about": "About",
+    "skills": "Skills",
+    "resume": "Resume",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "Footer": {
+    "designedBy": "Designed by Bootstrap | Reimagined with Next.js & Tailwind CSS"
+  },
+  "Contact": {
+    "title": "Contact",
+    "subtitle": "Get in touch with me for collaboration or just to say hello",
+    "address": "Address",
+    "call": "Call Me",
+    "email": "Email Me",
+    "namePlaceholder": "Your Name",
+    "emailPlaceholder": "Your Email",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Your message has been sent successfully!"
+  },
+  "Portfolio": {
+    "title": "Portfolio",
+    "subtitle": "My Recent Works",
+    "all": "All",
+    "viewDetails": "View Details"
+  },
+  "Skills": {
+    "title": "Skills",
+    "subtitle": "Technical Proficiencies & Competency Ratio"
+  },
+  "Resume": {
+    "title": "Resume",
+    "subtitle": "My Academic & Professional Journey",
+    "summary": "Summary",
+    "education": "Education",
+    "experience": "Experience",
+    "certification": "Certification"
+  },
+  "About": {
+    "title": "About Me",
+    "birthday": "Birthday",
+    "website": "Website",
+    "phone": "Phone",
+    "city": "City",
+    "age": "Age",
+    "degree": "Degree",
+    "email": "Email",
+    "freelance": "Freelance",
+    "available": "Available",
+    "notAvailable": "Not Available"
+  }
+}

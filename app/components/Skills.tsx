@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { getSkills } from "@/actions/portfolio";
 import { BsCheckCircle } from "react-icons/bs";
 import ScrollReveal from "./ScrollReveal";
@@ -13,9 +14,14 @@ interface Skill {
   tooltip: string;
 }
 
+interface SkillsProps {
+}
+
 export default function Skills() {
+  const locale = useLocale();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
+  const isEn = locale === "en";
 
   useEffect(() => {
     async function loadSkills() {
@@ -27,7 +33,7 @@ export default function Skills() {
             name: item.name,
             category: item.category,
             percentage: Number(item.percentage),
-            tooltip: item.tooltip || ""
+            tooltip: isEn ? (item.tooltip_en || item.tooltip_id || "") : (item.tooltip_id || item.tooltip_en || "")
           }));
           setSkills(mappedData);
         }
@@ -46,6 +52,9 @@ export default function Skills() {
     if (category === "UI/UX Design Skills" || category === "Front-end Development") {
       category = "UI/UX & Frontend Development";
     }
+    if (category === "Data Analyst Tools") {
+      category = "Framework & Other";
+    }
     return { ...skill, category };
   });
 
@@ -54,7 +63,7 @@ export default function Skills() {
     "Soft Skills",
     "Back-end Development",
     "UI/UX & Frontend Development",
-    "Data Analyst Tools"
+    "Framework & Other"
   ];
 
   const groupedCategories = categoriesOrder.map(title => {
@@ -71,8 +80,8 @@ export default function Skills() {
         return { desc: "Scalable APIs, databases, & architectures", countColor: "text-white/40" };
       case "UI/UX & Frontend Development":
         return { desc: "Pixel-perfect & responsive client interfaces", countColor: "text-white/40" };
-      case "Data Analyst Tools":
-        return { desc: "Data insights, dashboards, & statistics", countColor: "text-white/40" };
+      case "Framework & Other":
+        return { desc: "Libraries, tooling, frameworks, and utility platforms", countColor: "text-white/40" };
       default:
         return { desc: "Professional technical capabilities", countColor: "text-white/40" };
     }
@@ -100,9 +109,41 @@ export default function Skills() {
 
         {/* Loading Spinner */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 space-y-4">
-            <div className="w-12 h-12 border-4 border-[#ececec] border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-[#ececec]/50 text-sm font-medium">Fetching expertise metrics...</p>
+          /* Premium Bento-Style Skills Grid Skeleton to prevent Layout Shift */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-gradient-to-br from-[#232323] to-[#202020] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl space-y-8 h-full animate-pulse"
+              >
+                {/* Category Header Skeleton */}
+                <div className="space-y-1.5 border-b border-white/5 pb-5">
+                  <div className="flex justify-between items-center">
+                    <div className="h-6 w-36 bg-white/10 rounded-lg"></div>
+                    <div className="h-4 w-12 bg-white/10 rounded-md"></div>
+                  </div>
+                  <div className="h-3 w-48 bg-white/5 rounded-md"></div>
+                </div>
+                
+                {/* Skill Items Bento Box List Skeleton */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {Array.from({ length: 4 }).map((_, sIdx) => (
+                    <div
+                      key={sIdx}
+                      className="p-4 bg-white/[0.015] border border-white/[0.03] rounded-2xl space-y-3"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="h-4 w-20 bg-white/10 rounded-md"></div>
+                        <div className="h-3 w-8 bg-white/10 rounded"></div>
+                      </div>
+                      <div className="w-full h-[5px] bg-white/5 rounded-full mt-2.5 overflow-hidden">
+                        <div className="h-full w-2/3 bg-white/10 rounded-full"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         ) : groupedCategories.length === 0 ? (
           <div className="text-center py-24 text-[#ececec]/60 bg-white/[0.01] rounded-3xl border border-white/5 max-w-lg mx-auto">

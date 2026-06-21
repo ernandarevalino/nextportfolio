@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { BsEye, BsGithub, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import Link from "next/link";
 import ScrollReveal from "./ScrollReveal";
@@ -20,10 +22,30 @@ interface PortfolioProps {
 }
 
 export default function Portfolio({ projects = [] }: PortfolioProps) {
+  const locale = useLocale();
+  const searchParams = useSearchParams();
+  const fromDetail = searchParams.get("from") === "detail";
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6;
   const loading = false;
+  const isEn = locale === "en";
+
+  useEffect(() => {
+    if (!fromDetail) return;
+
+    const timer = setTimeout(() => {
+      const element = document.getElementById("portfolio");
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [fromDetail]);
 
   const filters = [
     { key: "all", label: "All Projects" },
@@ -43,7 +65,7 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
 
         return {
           id: item.id,
-          title: item.title,
+          title: isEn ? (item.title_en || item.title_id) : (item.title_id || item.title_en),
           category: item.category,
           categoryKey: catKey,
           imgSrc: item.image_url,
@@ -68,44 +90,7 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
     setCurrentPage(1);
   };
 
-  // FIX: Menggunakan micro-intervals & behavior "auto" agar langsung SPAWN instan
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash === "#portfolio") {
-      const spawnToPortfolio = () => {
-        const el = document.getElementById("portfolio");
-        if (el) {
-          const headerOffset = 80; // Sesuaikan dengan tinggi navbar kamu
-          const elementPosition = el.getBoundingClientRect().top + window.scrollY;
-          const offsetPosition = elementPosition - headerOffset;
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "auto" // "auto" akan memaksa halaman langsung SPAWN di tempat tanpa animasi scroll
-          });
-        }
-      };
-
-      // Eksekusi instan saat pertama kali mendarat
-      spawnToPortfolio();
-
-      // Tembakan beruntun super cepat untuk menahan posisi koordinat 
-      // dari hantaman efek Layout Shift animasi ScrollReveal komponen Skills/Resume di atasnya
-      const t1 = setTimeout(spawnToPortfolio, 30);
-      const t2 = setTimeout(spawnToPortfolio, 100);
-      const t3 = setTimeout(spawnToPortfolio, 200);
-      const t4 = setTimeout(spawnToPortfolio, 400);
-
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-        clearTimeout(t4);
-      };
-    }
-  }, []);
-
   return (
-    // Ditambahkan class 'scroll-mt-20' (80px) agar anchor bawaan browser juga ikut presisi sejak awal
     <section id="portfolio" className="py-24 bg-[#1f1f1f] text-white relative scroll-mt-20">
       
       {/* Background Tech Accent */}
@@ -162,10 +147,11 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
               </div>
             ) : (
               <>
-                {/* Beautiful Grid with Zoom & Slide Overlay using Staggered Reveals */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-500">
+                {/* Fixed Grid Layout (Removed glitchy transition-all from grid container) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {paginatedItems.map((item, idx) => (
-                    <ScrollReveal key={item.id || idx} delay={idx * 150}>
+                    /* Injecting activeFilter to key ensures distinct render animation lifecycle */
+                    <ScrollReveal key={`project-${item.id || idx}-${activeFilter}`} delay={idx * 150}>
                       <div
                         className="group relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#232323] to-[#202020] border border-white/5 hover:border-white/10 shadow-2xl transition-all duration-500 hover:shadow-white/[0.01] h-full"
                       >
@@ -207,7 +193,7 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
                               </a>
                             )}
                             <Link
-                              href={`/portfolio/${item.id}`}
+                              href={`/${locale}/portfolio/${item.id}`}
                               className="w-12 h-12 bg-[#ececec] text-[#1f1f1f] hover:bg-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg cursor-pointer"
                               title="View Case Study Details"
                             >

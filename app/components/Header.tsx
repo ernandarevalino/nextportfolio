@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import {
   BsHouseDoor,
   BsPerson,
@@ -16,6 +18,21 @@ import {
 } from "react-icons/bs";
 
 export default function Header() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const locale = useLocale();
+
+  const handleLanguageChange = (newLocale: "id" | "en") => {
+    if (newLocale === locale) return;
+    const segments = pathname.split("/").filter(Boolean);
+    if (segments[0] === "id" || segments[0] === "en") {
+      segments[0] = newLocale;
+    } else {
+      segments.unshift(newLocale);
+    }
+    router.push("/" + segments.join("/"));
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
 
@@ -23,8 +40,8 @@ export default function Header() {
     { id: "hero", label: "Home", icon: BsHouseDoor },
     { id: "about", label: "About", icon: BsPerson },
     { id: "skills", label: "Skills", icon: BsHddStack },
+    { id: "portfolio", label: "PROJECTS", icon: BsImages },
     { id: "resume", label: "Resume", icon: BsFileEarmarkText },
-    { id: "portfolio", label: "Portfolio", icon: BsImages },
     { id: "contact", label: "Contact", icon: BsEnvelope },
   ];
 
@@ -104,7 +121,7 @@ export default function Header() {
         <nav className="hidden xl:flex items-center space-x-1">
           {menuItems.map((item) => {
             const isActive = activeSection === item.id;
-            const isPortfolio = item.label === "Portfolio";
+            const isPortfolio = item.label === "PROJECTS";
             return (
               <a
                 key={item.id}
@@ -154,6 +171,30 @@ export default function Header() {
 
         {/* Right-aligned Group: Socials + Mobile Menu Button */}
         <div className="flex items-center gap-6 ml-auto">
+          {/* Language Switcher */}
+          <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-0.5 font-['Nunito'] text-xs font-bold">
+            <button
+              onClick={() => handleLanguageChange("id")}
+              className={`px-2.5 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                locale === "id"
+                  ? "bg-white text-black"
+                  : "text-[#ececec]/60 hover:text-white"
+              }`}
+            >
+              ID
+            </button>
+            <button
+              onClick={() => handleLanguageChange("en")}
+              className={`px-2.5 py-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                locale === "en"
+                  ? "bg-white text-black"
+                  : "text-[#ececec]/60 hover:text-white"
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
           {/* Compact Header Social Icons */}
           <div className="hidden md:flex items-center gap-4">
             <a
@@ -171,7 +212,9 @@ export default function Header() {
               <BsFacebook className="text-base" />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/ernanrevv/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-[#ececec]/40 hover:text-white transition-all duration-300 hover:-translate-y-0.5"
               aria-label="Instagram"
             >

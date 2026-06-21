@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -17,18 +18,28 @@ export default function ScrollReveal({
   threshold = 0.1,
   className = "",
 }: ScrollRevealProps) {
-  const [isVisible, setIsVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const fromDetail = searchParams.get("from") === "detail";
+  const [isVisible, setIsVisible] = useState(fromDetail);
   const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (fromDetail) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Infinite dynamic triggers on scroll up and down
-        setIsVisible(entry.isIntersecting);
+        // Hanya trigger satu kali (trigger once) saat elemen memasuki viewport.
+        // Ini meningkatkan performa secara signifikan dan memutus loop guncangan scroll (scroll bouncing loop).
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (elementRef.current) {
+            observer.unobserve(elementRef.current);
+          }
+        }
       },
       {
         threshold,
-        rootMargin: "0px 0px -80px 0px", // Trigger slightly before fully entering viewport
+        rootMargin: "0px 0px -80px 0px", // Trigger sedikit sebelum elemen masuk penuh ke dalam viewport
       }
     );
 
@@ -41,7 +52,7 @@ export default function ScrollReveal({
         observer.unobserve(elementRef.current);
       }
     };
-  }, [threshold]);
+  }, [threshold, fromDetail]);
 
   return (
     <div
@@ -50,7 +61,7 @@ export default function ScrollReveal({
         isVisible ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-12 blur-[1px]"
       }`}
       style={{
-        transitionDelay: isVisible ? `${delay}ms` : "0ms",
+        transitionDelay: fromDetail ? "0ms" : `${delay}ms`,
       }}
     >
       {children}

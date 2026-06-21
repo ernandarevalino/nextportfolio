@@ -3,6 +3,16 @@
 import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
+function getStoragePathFromUrl(url: string | null | undefined, bucketName: string = "portfolio"): string | null {
+  if (!url) return null;
+  const marker = `/storage/v1/object/public/${bucketName}/`;
+  const index = url.indexOf(marker);
+  if (index !== -1) {
+    return url.substring(index + marker.length);
+  }
+  return null;
+}
+
 export async function getProjects() {
   try {
     const { data, error } = await supabase
@@ -22,11 +32,13 @@ export async function getProjects() {
 }
 
 export async function createProject(data: {
-  title: string;
+  title_id: string;
+  title_en: string;
   category: string;
   image_url: string;
   github_url?: string;
-  details?: string;
+  details_id?: string;
+  details_en?: string;
 }) {
   try {
     const { error } = await supabase.from("projects").insert([data]);
@@ -46,11 +58,13 @@ export async function createProject(data: {
 export async function updateProject(
   id: number,
   data: {
-    title: string;
+    title_id: string;
+    title_en: string;
     category: string;
     image_url: string;
     github_url?: string;
-    details?: string;
+    details_id?: string;
+    details_en?: string;
   }
 ) {
   try {
@@ -70,10 +84,45 @@ export async function updateProject(
 
 export async function deleteProject(id: number) {
   try {
+    let pathsToDelete: string[] = [];
+    try {
+      const { data: project } = await supabase
+        .from("projects")
+        .select("image_url, gallery_urls")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (project) {
+        if (project.image_url) {
+          const mainPath = getStoragePathFromUrl(project.image_url);
+          if (mainPath) pathsToDelete.push(mainPath);
+        }
+        if (project.gallery_urls && Array.isArray(project.gallery_urls)) {
+          project.gallery_urls.forEach((url: string) => {
+            const galleryPath = getStoragePathFromUrl(url);
+            if (galleryPath) pathsToDelete.push(galleryPath);
+          });
+        }
+      }
+    } catch (fetchErr) {
+      console.error("Error fetching project files for storage cleanup:", fetchErr);
+    }
+
     const { error } = await supabase.from("projects").delete().eq("id", id);
 
     if (error) {
       return { success: false, error: error.message };
+    }
+
+    if (pathsToDelete.length > 0) {
+      try {
+        const { error: removeError } = await supabase.storage.from("portfolio").remove(pathsToDelete);
+        if (removeError) {
+          console.error("Supabase Storage removal error:", removeError);
+        }
+      } catch (storageErr) {
+        console.error("Exception deleting project files from storage:", storageErr);
+      }
     }
 
     revalidatePath("/");
@@ -123,25 +172,47 @@ export async function getProfile() {
 }
 
 export async function updateProfile(data: {
-  hero_title: string;
+  hero_title_id: string;
+  hero_title_en: string;
   hero_name: string;
-  hero_description: string;
-  typewriter_words: string[];
+  hero_description_id: string;
+  hero_description_en: string;
+  typewriter_words_id: string[];
+  typewriter_words_en: string[];
   github_url?: string;
   linkedin_url?: string;
   instagram_url?: string;
   about_image_url?: string;
   about_name?: string;
-  about_title?: string;
+  about_title_id?: string;
+  about_title_en?: string;
   about_email?: string;
   about_phone?: string;
-  about_location?: string;
+  about_location_id?: string;
+  about_location_en?: string;
   about_maps_url?: string;
-  about_heading?: string;
-  about_bio_1?: string;
-  about_bio_2?: string;
+  about_heading_id?: string;
+  about_heading_en?: string;
+  about_bio_1_id?: string;
+  about_bio_1_en?: string;
+  about_bio_2_id?: string;
+  about_bio_2_en?: string;
 }) {
   try {
+    let oldImageUrl: string | null = null;
+    try {
+      const { data: currentProfile } = await supabase
+        .from("profile")
+        .select("about_image_url")
+        .eq("id", 1)
+        .maybeSingle();
+      if (currentProfile) {
+        oldImageUrl = currentProfile.about_image_url || null;
+      }
+    } catch (fetchErr) {
+      console.error("Error fetching old profile image URL for storage cleanup:", fetchErr);
+    }
+
     const { error } = await supabase
       .from("profile")
       .update(data)
@@ -150,6 +221,17 @@ export async function updateProfile(data: {
     if (error) {
       console.error("Error updating profile in updateProfile action:", error);
       return { success: false, error: error.message };
+    }
+
+    if (oldImageUrl && data.about_image_url && data.about_image_url !== oldImageUrl) {
+      try {
+        const oldPath = getStoragePathFromUrl(oldImageUrl);
+        if (oldPath) {
+          await supabase.storage.from("portfolio").remove([oldPath]);
+        }
+      } catch (storageErr) {
+        console.error("Error removing old profile image from storage:", storageErr);
+      }
     }
 
     revalidatePath("/");
@@ -183,7 +265,8 @@ export async function createSkill(data: {
   name: string;
   category: string;
   percentage: number;
-  tooltip?: string;
+  tooltip_id?: string;
+  tooltip_en?: string;
 }) {
   try {
     const { error } = await supabase
@@ -210,7 +293,8 @@ export async function updateSkill(
     name: string;
     category: string;
     percentage: number;
-    tooltip?: string;
+    tooltip_id?: string;
+    tooltip_en?: string;
   }
 ) {
   try {
@@ -291,13 +375,28 @@ export async function getResumeData() {
 }
 
 export async function updateResumeProfile(data: {
-  summary: string;
+  summary_id: string;
+  summary_en: string;
   location: string;
   email: string;
   phone: string;
   image_url: string;
 }) {
   try {
+    let oldImageUrl: string | null = null;
+    try {
+      const { data: currentResume } = await supabase
+        .from("resume_profile")
+        .select("image_url")
+        .eq("id", 1)
+        .maybeSingle();
+      if (currentResume) {
+        oldImageUrl = currentResume.image_url || null;
+      }
+    } catch (fetchErr) {
+      console.error("Error fetching old resume image URL for storage cleanup:", fetchErr);
+    }
+
     const { error } = await supabase
       .from("resume_profile")
       .upsert({ id: 1, ...data });
@@ -305,6 +404,17 @@ export async function updateResumeProfile(data: {
     if (error) {
       console.error("Error updating resume profile:", error);
       return { success: false, error: error.message };
+    }
+
+    if (oldImageUrl && data.image_url && data.image_url !== oldImageUrl) {
+      try {
+        const oldPath = getStoragePathFromUrl(oldImageUrl);
+        if (oldPath) {
+          await supabase.storage.from("portfolio").remove([oldPath]);
+        }
+      } catch (storageErr) {
+        console.error("Error removing old resume image from storage:", storageErr);
+      }
     }
 
     revalidatePath("/");
@@ -357,12 +467,17 @@ export async function deleteResumeSkill(id: number) {
 
 export async function createResumeItem(data: {
   type: "education" | "experience" | "certification";
-  title: string;
-  subtitle: string;
-  period: string;
-  description: string;
+  title_id: string;
+  title_en: string;
+  subtitle_id: string;
+  subtitle_en: string;
+  period_id: string;
+  period_en: string;
+  description_id: string;
+  description_en: string;
   order_index: number;
 }) {
+  "use server";
   try {
     const { error } = await supabase.from("resume_items").insert([data]);
     if (error) throw error;
@@ -379,13 +494,18 @@ export async function updateResumeItem(
   id: number,
   data: {
     type: "education" | "experience" | "certification";
-    title: string;
-    subtitle: string;
-    period: string;
-    description: string;
+    title_id: string;
+    title_en: string;
+    subtitle_id: string;
+    subtitle_en: string;
+    period_id: string;
+    period_en: string;
+    description_id: string;
+    description_en: string;
     order_index: number;
   }
 ) {
+  "use server";
   try {
     const { error } = await supabase.from("resume_items").update(data).eq("id", id);
     if (error) throw error;
@@ -399,6 +519,7 @@ export async function updateResumeItem(
 }
 
 export async function deleteResumeItem(id: number) {
+  "use server";
   try {
     const { error } = await supabase.from("resume_items").delete().eq("id", id);
     if (error) throw error;

@@ -2,14 +2,14 @@ import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { BsArrowLeft, BsGithub } from "react-icons/bs";
-import ScrollReveal from "../../components/ScrollReveal";
+import ScrollReveal from "../../../components/ScrollReveal";
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
 
   const { data: project, error } = await supabase
     .from("projects")
@@ -22,6 +22,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   }
 
   const galleryUrls: string[] = project.gallery_urls || [];
+  const isEn = locale === "en";
 
   return (
     <div className="min-h-screen bg-[#1f1f1f] text-white py-12 md:py-20 font-sans">
@@ -31,7 +32,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <ScrollReveal delay={0}>
           <div>
             <Link
-              href="/#portfolio"
+              href={`/${locale}?from=detail#portfolio`}
+              scroll={false}
               className="group inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 rounded-full hover:bg-white/15 hover:border-white/25 transition-all text-sm font-semibold cursor-pointer"
             >
               <BsArrowLeft className="transition-transform duration-300 group-hover:-translate-x-1" /> Back to Home
@@ -63,7 +65,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   </span>
                   
                   <h1 className="text-2xl md:text-3xl font-extrabold font-ubuntu tracking-tight text-white leading-tight">
-                    {project.title}
+                    {isEn ? (project.title_en || project.title_id) : (project.title_id || project.title_en)}
                   </h1>
 
                   {/* Info Pelengkap */}
@@ -104,10 +106,51 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <h2 className="text-2xl font-bold font-ubuntu border-b border-white/10 pb-4">
                   About the Project
                 </h2>
-                <div className="text-base md:text-lg text-[#ececec]/90 leading-relaxed whitespace-pre-wrap font-sans">
-                  {project.details || (
-                    <span className="italic text-white/40">No case study article has been written for this project yet.</span>
-                  )}
+                <div>
+                  {(() => {
+                    const text = isEn ? (project.details_en || project.details_id) : (project.details_id || project.details_en);
+                    if (!text) {
+                      return (
+                        <p className="italic text-white/40 text-base md:text-lg whitespace-pre-wrap font-sans">
+                          No case study article has been written for this project yet.
+                        </p>
+                      );
+                    }
+
+                    const parts = text.split(/(!\[.*?\]\(.*?\))/g);
+                    return parts.map((part: string, index: number) => {
+                      const match = part.match(/^!\[(.*?)\]\((.*?)\)$/);
+                      if (match) {
+                        const caption = match[1];
+                        const url = match[2];
+                        return (
+                          <div key={index} className="my-8 space-y-3 text-center group">
+                            <img
+                              src={url}
+                              alt={caption}
+                              className="mx-auto rounded-2xl border border-white/10 max-h-[500px] object-contain shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
+                            />
+                            {caption && (
+                              <p className="text-xs md:text-sm text-center text-[#ececec]/50 italic tracking-wide max-w-xl mx-auto px-4">
+                                {caption}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      } else {
+                        const cleanText = part.replace(/^\n+|\n+$/g, '');
+                        if (!cleanText.trim()) return null;
+                        return (
+                          <p
+                            key={index}
+                            className="mb-6 text-base md:text-lg text-[#ececec]/90 leading-relaxed whitespace-pre-wrap font-sans"
+                          >
+                            {cleanText}
+                          </p>
+                        );
+                      }
+                    });
+                  })()}
                 </div>
               </article>
             </ScrollReveal>
@@ -131,7 +174,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                       >
                         <img
                           src={url}
-                          alt={`${project.title} screenshot ${idx + 1}`}
+                          alt={`${project.title_en || project.title_id} screenshot ${idx + 1}`}
                           className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-1000"
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

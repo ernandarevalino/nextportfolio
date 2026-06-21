@@ -1,0 +1,58 @@
+{
+  "Header": {
+    "home": "Beranda",
+    "about": "Tentang",
+    "skills": "Keahlian",
+    "resume": "Resume",
+    "portfolio": "Portofolio",
+    "contact": "Kontak"
+  },
+  "Footer": {
+    "designedBy": "Didesain oleh Bootstrap | Direkayasa Ulang dengan Next.js & Tailwind CSS"
+  },
+  "Contact": {
+    "title": "Kontak",
+    "subtitle": "Hubungi saya untuk berkolaborasi atau sekadar menyapa",
+    "address": "Alamat",
+    "call": "Hubungi Saya",
+    "email": "Email Saya",
+    "namePlaceholder": "Nama Anda",
+    "emailPlaceholder": "Email Anda",
+    "subjectPlaceholder": "Subjek",
+    "messagePlaceholder": "Pesan",
+    "send": "Kirim Pesan",
+    "sending": "Mengirim...",
+    "success": "Pesan Anda telah berhasil dikirim!"
+  },
+  "Portfolio": {
+    "title": "Portofolio",
+    "subtitle": "Karya Terbaru Saya",
+    "all": "Semua",
+    "viewDetails": "Lihat Detail"
+  },
+  "Skills": {
+    "title": "Keahlian",
+    "subtitle": "Kemampuan Teknis & Tingkat Penguasaan"
+  },
+  "Resume": {
+    "title": "Resume",
+    "subtitle": "Perjalanan Akademik & Karir",
+    "summary": "Ringkasan",
+    "education": "Pendidikan",
+    "experience": "Pengalaman",
+    "certification": "Sertifikasi"
+  },
+  "About": {
+    "title": "Tentang Saya",
+    "birthday": "Tanggal Lahir",
+    "website": "Situs Web",
+    "phone": "Telepon",
+    "city": "Kota",
+    "age": "Umur",
+    "degree": "Gelar",
+    "email": "Email",
+    "freelance": "Pekerjaan Lepas",
+    "available": "Tersedia",
+    "notAvailable": "Tidak Tersedia"
+  }
+}

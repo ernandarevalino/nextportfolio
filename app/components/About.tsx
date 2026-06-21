@@ -1,27 +1,36 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { BsCheckCircleFill, BsEnvelope, BsTelephone, BsGeoAlt, BsArrowUpRight } from "react-icons/bs";
 import ScrollReveal from "./ScrollReveal";
 
 interface Profile {
   id: number;
-  hero_title: string;
+  hero_title_id: string;
+  hero_title_en: string;
   hero_name: string;
-  hero_description: string;
-  typewriter_words: string[];
+  hero_description_id: string;
+  hero_description_en: string;
+  typewriter_words_id: string[];
+  typewriter_words_en: string[];
   github_url: string;
   linkedin_url: string;
   instagram_url: string;
   about_image_url?: string;
   about_name?: string;
-  about_title?: string;
+  about_title_id?: string;
+  about_title_en?: string;
   about_email?: string;
   about_phone?: string;
-  about_location?: string;
+  about_location_id?: string;
+  about_location_en?: string;
   about_maps_url?: string;
-  about_heading?: string;
-  about_bio_1?: string;
-  about_bio_2?: string;
+  about_heading_id?: string;
+  about_heading_en?: string;
+  about_bio_1_id?: string;
+  about_bio_1_en?: string;
+  about_bio_2_id?: string;
+  about_bio_2_en?: string;
 }
 
 interface AboutProps {
@@ -29,18 +38,25 @@ interface AboutProps {
 }
 
 export default function About({ profile }: AboutProps) {
+  const locale = useLocale();
+  const isEn = locale === "en";
   const data = {
     about_image_url: profile?.about_image_url || "",
     about_name: profile?.about_name || "Ernanda Revalino",
-    about_title: profile?.about_title || "Full Stack Developer & Data Enthusiast",
+    about_title: (isEn ? profile?.about_title_en : profile?.about_title_id) || "Full Stack Developer & Data Enthusiast",
     about_email: profile?.about_email || "ernandarevalino@gmail.com",
     about_phone: profile?.about_phone || "+62 857-1020-9622",
-    about_location: profile?.about_location || "Serpong, Tangerang Selatan",
+    about_location: (isEn ? profile?.about_location_en : profile?.about_location_id) || "Serpong, Tangerang Selatan",
     about_maps_url: profile?.about_maps_url || "https://maps.google.com",
-    about_heading: profile?.about_heading || "Designing Systems, Analyzing Data, and Crafting Experiences",
-    about_bio_1: profile?.about_bio_1 || "I am a multi-disciplinary developer dedicated to building high-performance web applications and extracting analytical insights from complex data. I love translating challenging requirements into scalable architecture with beautiful, clean code.",
-    about_bio_2: profile?.about_bio_2 || "My journey combines full-stack development and data analytics tools, enabling me to build seamless software that delivers tangible impact. Let's create something extraordinary together.",
+    about_heading: (isEn ? profile?.about_heading_en : profile?.about_heading_id) || "Designing Systems, Analyzing Data, and Crafting Experiences",
+    about_bio_1: (isEn ? profile?.about_bio_1_en : profile?.about_bio_1_id) || "I am a multi-disciplinary developer dedicated to building high-performance web applications and extracting analytical insights from complex data. I love translating challenging requirements into scalable architecture with beautiful, clean code.",
+    about_bio_2: (isEn ? profile?.about_bio_2_en : profile?.about_bio_2_id) || "My journey combines full-stack development and data analytics tools, enabling me to build seamless software that delivers tangible impact. Let's create something extraordinary together.",
   };
+
+  // Otomatis bersihkan spasi/strip dan ubah format 08xx / +62 ke link WhatsApp resmi yang valid
+  const cleanPhone = data.about_phone.replace(/\D/g, ""); 
+  const finalWaNumber = cleanPhone.startsWith("0") ? "62" + cleanPhone.slice(1) : cleanPhone;
+  const whatsappLink = `https://wa.me/${finalWaNumber}`;
 
   return (
     <section id="about" className="py-24 bg-[#1f1f1f] text-white overflow-hidden relative">
@@ -101,7 +117,9 @@ export default function About({ profile }: AboutProps) {
                     )}
                     {data.about_phone && (
                       <a
-                        href={`tel:${data.about_phone.replace(/\s+/g, "")}`}
+                        href={whatsappLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="group/item flex items-center justify-between gap-3 px-5 py-4 bg-white/[0.02] hover:bg-white/[0.05] rounded-2xl text-[#ececec] border border-white/5 hover:border-white/10 transition-all duration-300"
                       >
                         <div className="flex items-center gap-3">
@@ -159,21 +177,21 @@ export default function About({ profile }: AboutProps) {
                 <ScrollReveal delay={300}>
                   <div className="bg-white/[0.02] p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 group text-center lg:text-left h-full">
                     <span className="block text-3xl font-black text-white font-ubuntu mb-1">3+</span>
-                    <span className="text-xs text-[#ececec]/40 uppercase tracking-wider font-semibold">Years Experience</span>
+                    <span className="text-[8px] text-[#ececec]/40 uppercase tracking-wider font-semibold">Years Semi Experience</span>
                   </div>
                 </ScrollReveal>
 
                 <ScrollReveal delay={450}>
                   <div className="bg-white/[0.02] p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 group text-center lg:text-left h-full">
                     <span className="block text-3xl font-black text-white font-ubuntu mb-1">20+</span>
-                    <span className="text-xs text-[#ececec]/40 uppercase tracking-wider font-semibold">Completed Projects</span>
+                    <span className="text-[8px] text-[#ececec]/40 uppercase tracking-wider font-semibold">Completed Projects (Personal/Side/Real)</span>
                   </div>
                 </ScrollReveal>
 
                 <ScrollReveal delay={600} className="col-span-2 sm:col-span-1">
                   <div className="bg-white/[0.02] p-5 rounded-2xl border border-white/5 hover:border-white/10 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 group text-center lg:text-left h-full">
                     <span className="block text-3xl font-black text-white font-ubuntu mb-1">10+</span>
-                    <span className="text-xs text-[#ececec]/40 uppercase tracking-wider font-semibold">Technologies Mastered</span>
+                    <span className="text-[8px] text-[#ececec]/40 uppercase tracking-wider font-semibold">Technologies Mastered</span>
                   </div>
                 </ScrollReveal>
               </div>

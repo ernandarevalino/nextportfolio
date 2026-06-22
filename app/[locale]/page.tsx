@@ -5,6 +5,7 @@ import Skills from "../components/Skills";
 import Resume from "../components/Resume";
 import Portfolio from "../components/Portfolio";
 import Contact from "../components/Contact";
+import ScrollRestoration from "../components/ScrollRestoration";
 import { getProjects, getProfile } from "@/actions/portfolio";
 
 interface PageProps {
@@ -22,6 +23,9 @@ export default async function Home({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#1f1f1f] text-white">
+      {/* Client-side Scroll Restoration */}
+      <ScrollRestoration />
+
       {/* Top Header Navigation */}
       <Header />
 

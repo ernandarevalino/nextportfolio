@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -10,7 +10,14 @@ import {
   BsTrash,
   BsSave,
   BsFileEarmarkText,
-  BsImage
+  BsImage,
+  BsListOl,
+  BsListUl,
+  BsSortAlphaDown,
+  BsTextLeft,
+  BsTextCenter,
+  BsTextRight,
+  BsTextParagraph
 } from "react-icons/bs";
 
 interface Project {
@@ -42,6 +49,10 @@ function ViewContent() {
   const [sessionUploadedUrls, setSessionUploadedUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Textarea Refs
+  const detailsIdRef = useRef<HTMLTextAreaElement>(null);
+  const detailsEnRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (id) {
@@ -145,6 +156,78 @@ function ViewContent() {
     setTimeout(() => {
       setSuccess(null);
     }, 4000);
+  };
+
+  const insertFormat = (formatType: string, target: "id" | "en") => {
+    const ref = target === "id" ? detailsIdRef : detailsEnRef;
+    const value = target === "id" ? detailsId : detailsEn;
+    const setValue = target === "id" ? setDetailsId : setDetailsEn;
+
+    let prefix = "";
+    let suffix = "";
+    let defaultText = "";
+
+    switch (formatType) {
+      case "list-decimal":
+        prefix = "\n<ol>\n  <li>";
+        suffix = "</li>\n  <li>Item 2</li>\n</ol>\n";
+        defaultText = "Item 1";
+        break;
+      case "list-alpha":
+        prefix = '\n<ol type="a">\n  <li>';
+        suffix = "</li>\n  <li>Item b</li>\n</ol>\n";
+        defaultText = "Item a";
+        break;
+      case "list-bullet":
+        prefix = "\n<ul>\n  <li>";
+        suffix = "</li>\n  <li>Item 2</li>\n</ul>\n";
+        defaultText = "Item 1";
+        break;
+      case "align-left":
+        prefix = '<p style="text-align: left;">';
+        suffix = "</p>";
+        defaultText = "Teks Anda";
+        break;
+      case "align-center":
+        prefix = '<p style="text-align: center;">';
+        suffix = "</p>";
+        defaultText = "Teks Anda";
+        break;
+      case "align-right":
+        prefix = '<p style="text-align: right;">';
+        suffix = "</p>";
+        defaultText = "Teks Anda";
+        break;
+      case "align-justify":
+        prefix = '<p style="text-align: justify;">';
+        suffix = "</p>";
+        defaultText = "Teks Anda";
+        break;
+      default:
+        return;
+    }
+
+    if (ref.current) {
+      const textarea = ref.current;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selectedText = text.substring(start, end);
+
+      const insertText = selectedText || defaultText;
+      const replacement = `${prefix}${insertText}${suffix}`;
+
+      const newValue = text.substring(0, start) + replacement + text.substring(end);
+      setValue(newValue);
+
+      // Focus and set selection range
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + prefix.length, start + prefix.length + insertText.length);
+      }, 50);
+    } else {
+      setValue((prev) => prev + `${prefix}${defaultText}${suffix}`);
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -278,8 +361,82 @@ function ViewContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-white/85">Article Details (ID)</label>
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <label className="text-xs font-bold text-white/85">Article Details (ID)</label>
+                    
+                    {/* Toolbar ID */}
+                    <div className="flex flex-wrap gap-1 bg-[#1f1f1f] p-1 rounded-xl border border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("list-decimal", "id")}
+                        className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="List Angka (1, 2, 3)"
+                      >
+                        <BsListOl className="text-xs" />
+                        <span className="hidden md:inline">1.2.3</span>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("list-alpha", "id")}
+                        className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="List Huruf (a, b, c)"
+                      >
+                        <BsSortAlphaDown className="text-xs" />
+                        <span className="hidden md:inline">a.b.c</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("list-bullet", "id")}
+                        className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="List Bullet"
+                      >
+                        <BsListUl className="text-xs" />
+                        <span className="hidden md:inline">Bullet</span>
+                      </button>
+
+                      <div className="w-[1px] bg-white/10 my-1 mx-0.5" />
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-left", "id")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Rata Kiri"
+                      >
+                        <BsTextLeft className="text-xs" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-center", "id")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Rata Tengah"
+                      >
+                        <BsTextCenter className="text-xs" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-right", "id")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Rata Kanan"
+                      >
+                        <BsTextRight className="text-xs" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-justify", "id")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Justify"
+                      >
+                        <BsTextParagraph className="text-xs" />
+                      </button>
+                    </div>
+                  </div>
                   <textarea
+                    ref={detailsIdRef}
                     value={detailsId}
                     onChange={(e) => setDetailsId(e.target.value)}
                     placeholder="Jelaskan proyek ini secara detail dalam Bahasa Indonesia..."
@@ -289,8 +446,82 @@ function ViewContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-white/85">Article Details (EN)</label>
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <label className="text-xs font-bold text-white/85">Article Details (EN)</label>
+                    
+                    {/* Toolbar EN */}
+                    <div className="flex flex-wrap gap-1 bg-[#1f1f1f] p-1 rounded-xl border border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("list-decimal", "en")}
+                        className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="List Angka (1, 2, 3)"
+                      >
+                        <BsListOl className="text-xs" />
+                        <span className="hidden md:inline">1.2.3</span>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("list-alpha", "en")}
+                        className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="List Huruf (a, b, c)"
+                      >
+                        <BsSortAlphaDown className="text-xs" />
+                        <span className="hidden md:inline">a.b.c</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("list-bullet", "en")}
+                        className="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="List Bullet"
+                      >
+                        <BsListUl className="text-xs" />
+                        <span className="hidden md:inline">Bullet</span>
+                      </button>
+
+                      <div className="w-[1px] bg-white/10 my-1 mx-0.5" />
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-left", "en")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Rata Kiri"
+                      >
+                        <BsTextLeft className="text-xs" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-center", "en")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Rata Tengah"
+                      >
+                        <BsTextCenter className="text-xs" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-right", "en")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Rata Kanan"
+                      >
+                        <BsTextRight className="text-xs" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => insertFormat("align-justify", "en")}
+                        className="flex items-center justify-center p-1.5 text-xs text-white/70 hover:text-amber-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-400/30 rounded-lg transition-all cursor-pointer"
+                        title="Justify"
+                      >
+                        <BsTextParagraph className="text-xs" />
+                      </button>
+                    </div>
+                  </div>
                   <textarea
+                    ref={detailsEnRef}
                     value={detailsEn}
                     onChange={(e) => setDetailsEn(e.target.value)}
                     placeholder="Describe this project in detail in English..."

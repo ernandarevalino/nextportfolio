@@ -26,6 +26,42 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#1f1f1f] text-white py-12 md:py-20 font-sans">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .article-content ol {
+          list-style-type: decimal !important;
+          padding-left: 1.5rem !important;
+          margin-top: 0.5rem !important;
+          margin-bottom: 0.5rem !important;
+        }
+        .article-content ol[type="a"] {
+          list-style-type: lower-alpha !important;
+        }
+        .article-content ol.list-\\[lower-alpha\\] {
+          list-style-type: lower-alpha !important;
+        }
+        .article-content ul {
+          list-style-type: disc !important;
+          padding-left: 1.5rem !important;
+          margin-top: 0.5rem !important;
+          margin-bottom: 0.5rem !important;
+        }
+        .article-content li {
+          margin-bottom: 0.25rem !important;
+          display: list-item !important;
+        }
+        .article-content .text-center {
+          text-align: center !important;
+        }
+        .article-content .text-right {
+          text-align: right !important;
+        }
+        .article-content .text-left {
+          text-align: left !important;
+        }
+        .article-content .text-justify {
+          text-align: justify !important;
+        }
+      `}} />
       <div className="container mx-auto px-6 md:px-12 max-w-7xl space-y-12">
         
         {/* Back Button */}
@@ -95,6 +131,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 )}
               </div>
             </ScrollReveal>
+
+            <ScrollReveal delay={300}>
+              <Link
+                href={`/${locale}?from=detail#portfolio`}
+                scroll={false}
+                className="group flex items-center justify-center gap-2.5 w-full px-6 py-4 bg-[#232323] hover:bg-white/5 border border-white/10 hover:border-amber-400/30 rounded-2xl transition-all duration-300 text-sm font-bold text-white hover:text-amber-400 shadow-xl cursor-pointer"
+              >
+                <BsArrowLeft className="transition-transform duration-300 group-hover:-translate-x-1" />
+                Back to Portfolio
+              </Link>
+            </ScrollReveal>
           </aside>
 
           {/* Kolom Kanan Article Box (lg:col-span-8) */}
@@ -140,13 +187,15 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                       } else {
                         const cleanText = part.replace(/^\n+|\n+$/g, '');
                         if (!cleanText.trim()) return null;
+                        const hasHtml = /<[a-z][\s\S]*>/i.test(cleanText);
                         return (
-                          <p
+                          <div
                             key={index}
-                            className="mb-6 text-base md:text-lg text-[#ececec]/90 leading-relaxed whitespace-pre-wrap font-sans"
-                          >
-                            {cleanText}
-                          </p>
+                            className={`mb-6 text-base md:text-lg text-[#ececec]/90 leading-relaxed font-sans article-content ${
+                              hasHtml ? "" : "whitespace-pre-wrap"
+                            }`}
+                            dangerouslySetInnerHTML={{ __html: cleanText }}
+                          />
                         );
                       }
                     });

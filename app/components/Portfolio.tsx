@@ -153,7 +153,7 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
                     /* Injecting activeFilter to key ensures distinct render animation lifecycle */
                     <ScrollReveal key={`project-${item.id || idx}-${activeFilter}`} delay={idx * 150}>
                       <div
-                        className="group relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#232323] to-[#202020] border border-white/5 hover:border-white/10 shadow-2xl transition-all duration-500 hover:shadow-white/[0.01] h-full"
+                        className="group relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#232323] to-[#202020] border border-white/5 hover:border-white/10 shadow-2xl transition-all duration-500 hover:shadow-white/[0.01] h-full flex flex-col"
                       >
                         {/* Image Frame with overflow hidden */}
                         <div className="aspect-[4/3] w-full overflow-hidden relative bg-black/20">
@@ -167,8 +167,38 @@ export default function Portfolio({ projects = [] }: PortfolioProps) {
                           />
                         </div>
 
-                        {/* Premium Glassmorphic Information Overlay (Fully Animated) */}
-                        <div className="absolute inset-0 bg-[#1f1f1f]/90 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center items-center p-8 text-center space-y-4 animate-fade-in">
+                        {/* Mobile Information Block (Static, no hover, Mobile Only) */}
+                        <div className="block md:hidden p-6 space-y-4 bg-gradient-to-b from-[#232323] to-[#202020] text-center flex-grow">
+                          <span className="text-[10px] font-bold tracking-widest text-[#ececec]/50 uppercase">
+                            {item.category}
+                          </span>
+                          <h4 className="text-lg font-black font-ubuntu text-white tracking-wide leading-tight px-2">
+                            {item.title}
+                          </h4>
+                          <div className="flex gap-4 justify-center pt-2">
+                            {item.githubUrl && item.githubUrl !== "#" && (
+                              <a
+                                href={item.githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-12 h-12 bg-white/5 text-white border border-white/10 rounded-full flex items-center justify-center active:scale-95 transition-all duration-200 shadow-lg cursor-pointer"
+                                title="View GitHub Repository"
+                              >
+                                <BsGithub className="text-base" />
+                              </a>
+                            )}
+                            <Link
+                              href={`/${locale}/portfolio/${item.id}`}
+                              className="w-12 h-12 bg-[#ececec] text-[#1f1f1f] rounded-full flex items-center justify-center active:scale-95 transition-all duration-200 shadow-lg cursor-pointer"
+                              title="View Case Study Details"
+                            >
+                              <BsEye className="text-base" />
+                            </Link>
+                          </div>
+                        </div>
+
+                        {/* Premium Glassmorphic Information Overlay (Fully Animated, Desktop Only) */}
+                        <div className="hidden md:flex absolute inset-0 bg-[#1f1f1f]/90 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex-col justify-center items-center p-8 text-center space-y-4 animate-fade-in">
                           {/* Floating Category with slide down */}
                           <span className="text-[10px] font-bold tracking-widest text-[#ececec]/50 uppercase translate-y-[-10px] group-hover:translate-y-0 transition-transform duration-500 ease-out">
                             {item.category}

@@ -148,61 +148,61 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <main className="lg:col-span-8 space-y-12">
             
             {/* Project Article Details */}
-            <ScrollReveal delay={350}>
-              <article className="bg-[#232323] p-8 md:p-12 rounded-[2rem] border border-white/10 hover:border-white/15 shadow-xl space-y-6 transition-all duration-300">
+            <article className="bg-[#232323] p-8 md:p-12 rounded-[2rem] border border-white/10 hover:border-white/15 shadow-xl space-y-6 transition-all duration-300">
+              <ScrollReveal delay={350}>
                 <h2 className="text-2xl font-bold font-ubuntu border-b border-white/10 pb-4">
                   About the Project
                 </h2>
-                <div>
-                  {(() => {
-                    const text = isEn ? (project.details_en || project.details_id) : (project.details_id || project.details_en);
-                    if (!text) {
+              </ScrollReveal>
+              <div>
+                {(() => {
+                  const text = isEn ? (project.details_en || project.details_id) : (project.details_id || project.details_en);
+                  if (!text) {
+                    return (
+                      <p className="italic text-white/40 text-base md:text-lg whitespace-pre-wrap font-sans">
+                        No case study article has been written for this project yet.
+                      </p>
+                    );
+                  }
+
+                  const parts = text.split(/(!\[.*?\]\(.*?\))/g);
+                  return parts.map((part: string, index: number) => {
+                    const match = part.match(/^!\[(.*?)\]\((.*?)\)$/);
+                    if (match) {
+                      const caption = match[1];
+                      const url = match[2];
                       return (
-                        <p className="italic text-white/40 text-base md:text-lg whitespace-pre-wrap font-sans">
-                          No case study article has been written for this project yet.
-                        </p>
+                        <div key={index} className="my-8 space-y-3 text-center group">
+                          <img
+                            src={url}
+                            alt={caption}
+                            className="mx-auto rounded-2xl border border-white/10 max-h-[500px] object-contain shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
+                          />
+                          {caption && (
+                            <p className="text-xs md:text-sm text-center text-[#ececec]/50 italic tracking-wide max-w-xl mx-auto px-4">
+                              {caption}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    } else {
+                      const cleanText = part.replace(/^\n+|\n+$/g, '');
+                      if (!cleanText.trim()) return null;
+                      const hasHtmlPart = /<[a-z][\s\S]*>/i.test(cleanText);
+                      return (
+                        <div
+                          key={index}
+                          className={`mb-6 text-base md:text-lg text-[#ececec]/90 leading-relaxed font-sans article-content ${
+                            hasHtmlPart ? "" : "whitespace-pre-wrap"
+                          }`}
+                          dangerouslySetInnerHTML={{ __html: cleanText }}
+                        />
                       );
                     }
-
-                    const parts = text.split(/(!\[.*?\]\(.*?\))/g);
-                    return parts.map((part: string, index: number) => {
-                      const match = part.match(/^!\[(.*?)\]\((.*?)\)$/);
-                      if (match) {
-                        const caption = match[1];
-                        const url = match[2];
-                        return (
-                          <div key={index} className="my-8 space-y-3 text-center group">
-                            <img
-                              src={url}
-                              alt={caption}
-                              className="mx-auto rounded-2xl border border-white/10 max-h-[500px] object-contain shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
-                            />
-                            {caption && (
-                              <p className="text-xs md:text-sm text-center text-[#ececec]/50 italic tracking-wide max-w-xl mx-auto px-4">
-                                {caption}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      } else {
-                        const cleanText = part.replace(/^\n+|\n+$/g, '');
-                        if (!cleanText.trim()) return null;
-                        const hasHtml = /<[a-z][\s\S]*>/i.test(cleanText);
-                        return (
-                          <div
-                            key={index}
-                            className={`mb-6 text-base md:text-lg text-[#ececec]/90 leading-relaxed font-sans article-content ${
-                              hasHtml ? "" : "whitespace-pre-wrap"
-                            }`}
-                            dangerouslySetInnerHTML={{ __html: cleanText }}
-                          />
-                        );
-                      }
-                    });
-                  })()}
-                </div>
-              </article>
-            </ScrollReveal>
+                  });
+                })()}
+              </div>
+            </article>
 
             {/* Project Gallery Section */}
             {galleryUrls.length > 0 && (
